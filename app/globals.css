@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* PrimeCode website tokens (PrimeCode/Web/nextjs-app/src/app/globals.css); brand/tokens.ts is the
+   source for slides. */
+@theme {
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-secondary: #06b6d4;
+  --color-accent: #8b5cf6;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-bg-light: #f8fafc;
+  --color-bg-dark: #0f172a;
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
+}
+
+body {
+  background: var(--color-bg-light);
+  color: var(--color-text-primary);
+}
