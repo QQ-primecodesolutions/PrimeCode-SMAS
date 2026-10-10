@@ -1,0 +1,52 @@
+{
+  "contentId": "PC-2026-003",
+  "week": 2,
+  "publishDate": "2026-09-01",
+  "series": "Tech for Business",
+  "pillar": "Business Problems",
+  "topic": "Does your business actually need a website?",
+  "audience": "Local SMEs",
+  "objective": "Create demand honestly",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Not every business needs a website. Here's how to tell if yours does.",
+  "caption": "Not every business needs a website. Some do fine on word of mouth and a busy WhatsApp.\n\nBut here is how to tell if yours is losing something without one.\n\n1. Customers ask you the same questions every day — your hours, your prices, where you are\n2. People cannot find you when they search online\n3. Your competitors look more established than you, even when your work is better\n4. You are sending photos of your price list on WhatsApp\n5. Someone asked for your website and you had to say you do not have one\n\nIf you ticked three or more, a website is probably costing you customers by not existing.\n\nIt does not need to be complicated or expensive. It needs to answer the questions your customers are already asking you.\n\nIs your business in this position? Tell us in the comments.",
+  "captionFB": "Genuine question for the business owners here: how many times a week do you answer the same question on WhatsApp?\n\nNot every business needs a website. Some do fine on word of mouth and a busy WhatsApp.\n\nBut here is how to tell if yours is losing something without one.\n\n1. Customers ask you the same questions every day — your hours, your prices, where you are\n2. People cannot find you when they search online\n3. Your competitors look more established than you, even when your work is better\n4. You are sending photos of your price list on WhatsApp\n5. Someone asked for your website and you had to say you do not have one\n\nIf you ticked three or more, a website is probably costing you customers by not existing.\n\nIt does not need to be complicated or expensive. It needs to answer the questions your customers are already asking you.\n\nIs your business in this position? Tell us in the comments.",
+  "cta": "Is your business in this position? Tell us in the comments.",
+  "visualTemplate": "BIZ-01",
+  "visualBrief": "Tick-mark iconography, one sign per slide. Warm and helpful in tone — this post must never read as if it is mocking businesses that don't have a website. The final slide carries the soft conclusion, not a hard sell.",
+  "hashtags": [
+    "#SmallBusiness",
+    "#BusinessTechnology",
+    "#Qwaqwa",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "DRAFT",
+  "notes": "Facebook caption opens with the question, then the full Instagram caption (md: 'Open with ... Then the list'). Trim the opening line on FB if it reads twice.",
+  "slides": [
+    {
+      "title": "Not every business needs a website.",
+      "subtitle": "Here's how to tell if yours does."
+    },
+    {
+      "title": "1. Customers ask you the same questions every day.",
+      "subtitle": "Hours. Prices. Where you are."
+    },
+    {
+      "title": "2. People can't find you when they search online."
+    },
+    {
+      "title": "3. Competitors look more established than you — even when your work is better."
+    },
+    {
+      "title": "4. You're sending photos of your price list on WhatsApp."
+    },
+    {
+      "title": "5. Someone asked for your website and you had to say you don't have one."
+    },
+    {
+      "title": "Three or more?",
+      "subtitle": "A website is already costing you customers by not existing."
+    }
+  ]
+}

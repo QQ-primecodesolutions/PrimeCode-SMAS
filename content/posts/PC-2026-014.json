@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-014",
+  "week": 7,
+  "publishDate": "2026-10-09",
+  "series": "Behind the Code",
+  "pillar": "Behind the Code",
+  "topic": "Behind the Code: how we design a database before writing any code",
+  "audience": "Technical + business audience",
+  "objective": "Demonstrate rigour",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Before we write a single line of code, we draw boxes and arrows.",
+  "caption": "",
+  "cta": "Save this if you're learning to build systems.",
+  "visualTemplate": "CODE-01",
+  "visualBrief": "Clean ER-style diagram (customers / bookings / services). Use a real diagram from a project or a neutral demo.",
+  "hashtags": [
+    "#BehindTheCode",
+    "#SoftwareDevelopment",
+    "#Databases",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "Before we write a single line of code, we draw boxes and arrows."
+    }
+  ]
+}

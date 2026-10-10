@@ -1,0 +1,30 @@
+{
+  "contentId": "PC-2026-020",
+  "week": 10,
+  "publishDate": "2026-10-30",
+  "series": "Behind the Code",
+  "pillar": "Behind the Code",
+  "topic": "Behind the Code: how we make sites load fast on slow connections",
+  "audience": "Technical + business audience",
+  "objective": "Demonstrate capability",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Fast websites aren't luck. Here are four things we do every time.",
+  "caption": "",
+  "cta": "Save this one — it applies to any site you own.",
+  "visualTemplate": "CODE-01",
+  "visualBrief": "Before/after performance metrics from a real project. Only use figures you can verify.",
+  "hashtags": [
+    "#BehindTheCode",
+    "#WebDevelopment",
+    "#SoftwareDevelopment",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "notes": "Use only performance figures that can be verified.",
+  "slides": [
+    {
+      "title": "Fast websites aren't luck. Here are four things we do every time."
+    }
+  ]
+}

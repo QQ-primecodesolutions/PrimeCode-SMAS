@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-015",
+  "week": 8,
+  "publishDate": "2026-10-13",
+  "series": "PrimeCode Explains",
+  "pillar": "Education",
+  "topic": "Website vs web application — what's the difference?",
+  "audience": "Business owners",
+  "objective": "Build credibility",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "A website tells people about your business. A web application runs part of it.",
+  "caption": "",
+  "cta": "Which one does your business actually need? Ask us.",
+  "visualTemplate": "TECH-01",
+  "visualBrief": "Two-column comparison graphic with clear examples under each.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#WebDevelopment",
+    "#Technology",
+    "#SmallBusiness"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "A website tells people about your business. A web application runs part of it."
+    }
+  ]
+}

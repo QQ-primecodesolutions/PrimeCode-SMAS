@@ -1,0 +1,33 @@
+{
+  "contentId": "PC-2026-016",
+  "week": 8,
+  "publishDate": "2026-10-16",
+  "series": "Build With PrimeCode",
+  "pillar": "Projects",
+  "topic": "Behind the Build: Deliwe Legacy",
+  "audience": "Established businesses / multi-service companies",
+  "objective": "Show range",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "One company. Multiple divisions. One website that had to make sense of all of it.",
+  "caption": "",
+  "cta": "Got a complex business to present online? That's the kind of problem we enjoy.",
+  "visualTemplate": "PROJECT-01",
+  "visualBrief": "Desktop mockups showing the structure. Emphasise information architecture, not decoration. Confirm client permission.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#WebDevelopment",
+    "#SouthAfrica",
+    "#BusinessTechnology"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "One company. Multiple divisions. One website that had to make sense of all of it."
+    }
+  ],
+  "clientPermission": {
+    "status": "pending",
+    "client": "Deliwe Legacy"
+  }
+}

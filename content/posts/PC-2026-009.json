@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-009",
+  "week": 5,
+  "publishDate": "2026-09-22",
+  "series": "Tech for Business",
+  "pillar": "Business Problems",
+  "topic": "Still taking bookings on WhatsApp?",
+  "audience": "Service businesses / salons / gyms",
+  "objective": "Create demand",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "WhatsApp bookings work — right up until they don't.",
+  "caption": "",
+  "cta": "How many bookings do you handle a week? Comment below.",
+  "visualTemplate": "BIZ-01",
+  "visualBrief": "Split-screen visual: messy chat thread vs clean booking screen. Slides: when WhatsApp is fine / when it breaks / what a booking system does.",
+  "hashtags": [
+    "#SmallBusiness",
+    "#BusinessTechnology",
+    "#Qwaqwa",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "WhatsApp bookings work — right up until they don't."
+    }
+  ]
+}

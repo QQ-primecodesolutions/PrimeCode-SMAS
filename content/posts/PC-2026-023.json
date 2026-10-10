@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-023",
+  "week": 12,
+  "publishDate": "2026-11-10",
+  "series": "Tech for Business",
+  "pillar": "Business Problems",
+  "topic": "5 signs your business has outgrown its current system",
+  "audience": "Growing SMEs",
+  "objective": "Create demand",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Growth doesn't announce itself. It shows up as small daily frustrations.",
+  "caption": "",
+  "cta": "Recognise any of these? Let's talk about what's next.",
+  "visualTemplate": "BIZ-01",
+  "visualBrief": "Numbered signs, one per slide. Final slide: soft CTA.",
+  "hashtags": [
+    "#SmallBusiness",
+    "#BusinessTechnology",
+    "#CustomSoftware",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "Growth doesn't announce itself. It shows up as small daily frustrations."
+    }
+  ]
+}

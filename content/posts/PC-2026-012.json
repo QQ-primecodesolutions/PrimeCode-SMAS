@@ -1,0 +1,34 @@
+{
+  "contentId": "PC-2026-012",
+  "week": 6,
+  "publishDate": "2026-10-02",
+  "series": "Build With PrimeCode",
+  "pillar": "Projects",
+  "topic": "Behind the Build: BZ Fitness and Wellness",
+  "audience": "Local SMEs",
+  "objective": "Prove capability locally",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "A community fitness business in Tseki needed more than a Facebook page.",
+  "caption": "",
+  "cta": "Running something similar? Let's talk about what you'd need.",
+  "visualTemplate": "PROJECT-01",
+  "visualBrief": "Phone mockups showing programmes, pricing and WhatsApp enquiry flow. Confirm client permission first.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#WebDevelopment",
+    "#FreeState",
+    "#SmallBusiness"
+  ],
+  "status": "IDEA",
+  "notes": "Verify before approving: the business is in Tseki.",
+  "slides": [
+    {
+      "title": "A community fitness business in Tseki needed more than a Facebook page."
+    }
+  ],
+  "clientPermission": {
+    "status": "pending",
+    "client": "BZ Fitness and Wellness"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "contentId": "PC-2026-010",
+  "week": 5,
+  "publishDate": "2026-09-25",
+  "series": "Behind the Code",
+  "pillar": "Behind the Code",
+  "topic": "Behind the Code: what happens when you click 'Submit'",
+  "audience": "Technical + curious business audience",
+  "objective": "Demonstrate capability",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "You click Submit. Six things happen before you see 'Thank you'.",
+  "caption": "",
+  "cta": "Want to see more of how this works? Let us know.",
+  "visualTemplate": "CODE-01",
+  "visualBrief": "Flow diagram: browser to server to validation to database to response. Real editor screenshot on one slide.",
+  "hashtags": [
+    "#BehindTheCode",
+    "#SoftwareDevelopment",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "You click Submit. Six things happen before you see 'Thank you'."
+    }
+  ]
+}

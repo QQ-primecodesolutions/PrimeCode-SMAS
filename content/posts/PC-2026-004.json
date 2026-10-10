@@ -1,0 +1,55 @@
+{
+  "contentId": "PC-2026-004",
+  "week": 2,
+  "publishDate": "2026-09-04",
+  "series": "Build With PrimeCode",
+  "pillar": "Projects",
+  "topic": "Behind the Build: Thiboloha Special School",
+  "audience": "Schools / organisations / SMEs",
+  "objective": "Prove capability with real work",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "A school with a lot to say and nowhere to say it. Here's what we built.",
+  "caption": "A school has a lot to communicate. Programmes, admissions, achievements, news, contact details — and parents asking about all of it.\n\nThiboloha Special School needed one place where all of that lives, and where a parent can find an answer without phoning the office.\n\nWhat we built: a structured, responsive website covering programmes, admissions, news, achievements and contact information, organised so a parent can find what they need in a few taps, on a phone, on data.\n\nWhy the structure mattered: the hard part was not the design. It was deciding what goes where, so that a large amount of information does not become a maze.\n\nPrimeCode Solutions is credited as the developer and maintainer of the site.\n\nDoes your organisation have a lot to say and nowhere good to say it? Let's talk.",
+  "captionFB": "A school has a lot to communicate. Programmes, admissions, achievements, news, contact details — and parents asking about all of it.\n\nThiboloha Special School needed one place where all of that lives, and where a parent can find an answer without phoning the office.\n\nWhat we built: a structured, responsive website covering programmes, admissions, news, achievements and contact information, organised so a parent can find what they need in a few taps, on a phone, on data.\n\nWhy the structure mattered: the hard part was not the design. It was deciding what goes where, so that a large amount of information does not become a maze.\n\nPrimeCode Solutions is credited as the developer and maintainer of the site.\n\nIf you work at a school or an organisation and you are still fielding the same questions by phone every week, that is exactly the problem a properly structured site solves.\n\nDoes your organisation have a lot to say and nowhere good to say it? Let's talk.",
+  "cta": "Does your organisation need a proper website? Let's talk.",
+  "visualTemplate": "PROJECT-01",
+  "visualBrief": "Laptop and phone mockups of the live site. Show real screens, not a decorated abstraction. Structure the slides as problem → what we built → why it mattered. Do not include performance claims (traffic, enquiries, engagement) unless you have the numbers to back them.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#WebDevelopment",
+    "#FreeState",
+    "#Qwaqwa"
+  ],
+  "status": "DRAFT",
+  "notes": "Needs written permission from Thiboloha Special School. On Facebook, tag the school's page if it has one. Verify before approving: 'Built and maintained by PrimeCode Solutions' (still maintaining?).",
+  "slides": [
+    {
+      "title": "Behind the Build",
+      "subtitle": "Thiboloha Special School"
+    },
+    {
+      "title": "THE PROBLEM",
+      "subtitle": "A school with a lot to communicate — and parents asking about all of it."
+    },
+    {
+      "title": "Programmes. Admissions. News. Achievements. Contact.",
+      "subtitle": "All of it living in different places."
+    },
+    {
+      "title": "WHAT WE BUILT",
+      "subtitle": "One structured, responsive site — organised so a parent finds an answer in a few taps."
+    },
+    {
+      "title": "THE HARD PART",
+      "subtitle": "Not the design. Deciding what goes where, so a lot of information doesn't become a maze."
+    },
+    {
+      "title": "Built and maintained by PrimeCode Solutions."
+    }
+  ],
+  "clientPermission": {
+    "status": "pending",
+    "client": "Thiboloha Special School"
+  }
+}

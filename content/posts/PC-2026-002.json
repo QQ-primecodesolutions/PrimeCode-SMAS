@@ -1,0 +1,50 @@
+{
+  "contentId": "PC-2026-002",
+  "week": 1,
+  "publishDate": "2026-08-28",
+  "series": "PrimeCode Services",
+  "pillar": "Services",
+  "topic": "What PrimeCode Solutions actually does",
+  "audience": "Local SMEs / organisations",
+  "objective": "Explain the offering clearly",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "\"So what do you actually build?\" Fair question. Here's the honest answer.",
+  "caption": "\"So what do you actually build?\"\n\nFair question. Here is the honest answer.\n\nWebsites — professional, fast sites that work properly on a phone, because that is where your customers are.\n\nWeb applications — systems that do something, not just say something. Bookings, registrations, dashboards, portals.\n\nCustom software — built around how your business actually works, instead of forcing your business to fit someone else's software.\n\nSEO — helping people find you when they search for what you do.\n\nAnd if you are not sure which of those you need, that is a normal place to start. Ask us. We will tell you honestly if you do not need us yet.\n\nSend us a message.",
+  "captionFB": "\"So what do you actually build?\"\n\nFair question. Here is the honest answer.\n\nWebsites — professional, fast sites that work properly on a phone, because that is where your customers are.\n\nWeb applications — systems that do something, not just say something. Bookings, registrations, dashboards, portals.\n\nCustom software — built around how your business actually works, instead of forcing your business to fit someone else's software.\n\nSEO — helping people find you when they search for what you do.\n\nAnd if you are not sure which of those you need, that is a normal place to start. Ask us. We will tell you honestly if you do not need us yet.\n\nWe would rather talk you out of spending money on the wrong thing than sell you something you don't need yet.\n\nSend us a message.",
+  "cta": "Have a problem you think software could solve? Send us a message.",
+  "visualTemplate": "BRAND-01",
+  "visualBrief": "One service per slide. Consistent icon style, consistent position, consistent type size — the repetition is what makes the feed look like a company rather than a collection of posts. Only list the four services PrimeCode currently sells. Mobile apps and integrations stay off this graphic until they are formally launched.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#WebDevelopment",
+    "#CustomSoftware",
+    "#SmallBusiness"
+  ],
+  "status": "DRAFT",
+  "slides": [
+    {
+      "title": "\"So what do you actually build?\""
+    },
+    {
+      "title": "WEBSITES",
+      "subtitle": "Fast, professional, and built for a phone on data."
+    },
+    {
+      "title": "WEB APPLICATIONS",
+      "subtitle": "Systems that do something. Bookings. Registrations. Dashboards."
+    },
+    {
+      "title": "CUSTOM SOFTWARE",
+      "subtitle": "Built around how your business works — not the other way round."
+    },
+    {
+      "title": "SEO",
+      "subtitle": "Helping people find you when they search for what you do."
+    },
+    {
+      "title": "Not sure which one you need?",
+      "subtitle": "That's a normal place to start. Ask us."
+    }
+  ]
+}

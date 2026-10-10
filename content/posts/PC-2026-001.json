@@ -1,0 +1,53 @@
+{
+  "contentId": "PC-2026-001",
+  "week": 1,
+  "publishDate": "2026-08-25",
+  "series": "PrimeCode Journey",
+  "pillar": "Founder / Brand",
+  "topic": "PrimeCode is building again",
+  "audience": "Everyone / local community",
+  "objective": "Reintroduce the brand",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "This page has been quiet. That wasn't neglect. We were building.",
+  "caption": "This page has been quiet for a long time. That was not neglect — it was building.\n\nPrimeCode Solutions is a software development company based in Phuthaditjhaba. We build websites, web applications and custom software for businesses, schools and organisations, most of them right here in Qwaqwa and the wider Free State.\n\nOver the last while we have been doing the work rather than talking about it. Now we would like to do both.\n\nFrom here you will hear from us twice a week:\nTuesdays — something useful about technology and business\nFridays — what we are building and how we build it\n\nNo jargon. No pretending to be bigger than we are. Just the work.\n\nFollow along.",
+  "captionFB": "This page has been quiet for a long time. That was not neglect — it was building.\n\nPrimeCode Solutions is a software development company based in Phuthaditjhaba. We build websites, web applications and custom software for businesses, schools and organisations, most of them right here in Qwaqwa and the wider Free State.\n\nOver the last while we have been doing the work rather than talking about it. Now we would like to do both.\n\nFrom here you will hear from us twice a week:\nTuesdays — something useful about technology and business\nFridays — what we are building and how we build it\n\nNo jargon. No pretending to be bigger than we are. Just the work.\n\nIf you run a business, a school or an organisation here and you have ever thought \"there must be a better way to do this\" — that thought is usually the start of a software project. Those are the conversations we like having.\n\nFollow along.",
+  "cta": "Follow along. We post every Tuesday and Friday.",
+  "visualTemplate": "INSIGHT-01",
+  "visualBrief": "Dark background, one bold sentence per slide, PrimeCode brand colours. No stock photography. The final slide is the logo and tagline only. Keep the type large enough to read on a phone at arm's length.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#Qwaqwa",
+    "#Phuthaditjhaba",
+    "#SoftwareDevelopment"
+  ],
+  "status": "DRAFT",
+  "notes": "Rendered with INSIGHT-01 (typographic), not the photo-led JOURNEY-01. Verify before approving: 'most of them right here in Qwaqwa and the wider Free State'.",
+  "slides": [
+    {
+      "title": "This page has been quiet."
+    },
+    {
+      "title": "That wasn't neglect.",
+      "subtitle": "We were building."
+    },
+    {
+      "title": "PrimeCode Solutions",
+      "subtitle": "Software development, from Phuthaditjhaba."
+    },
+    {
+      "title": "Websites. Web applications. Custom software.",
+      "subtitle": "For businesses, schools and organisations."
+    },
+    {
+      "title": "From now on:",
+      "items": [
+        "Tuesdays — something useful",
+        "Fridays — what we're building"
+      ]
+    },
+    {
+      "title": "Technology that solves real problems."
+    }
+  ]
+}

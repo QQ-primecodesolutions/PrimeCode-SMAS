@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-019",
+  "week": 10,
+  "publishDate": "2026-10-27",
+  "series": "Tech for Business",
+  "pillar": "Business Problems",
+  "topic": "Why your website has to work on a cheap phone and a slow connection",
+  "audience": "Local SMEs",
+  "objective": "Educate on a locally relevant issue",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Most of your customers will see your website on a phone, on data, on a weak signal.",
+  "caption": "",
+  "cta": "Open your website on your phone right now. How long did it take?",
+  "visualTemplate": "BIZ-01",
+  "visualBrief": "Side-by-side load comparison. Mention data cost, not just speed — that's what customers feel.",
+  "hashtags": [
+    "#SmallBusiness",
+    "#WebDevelopment",
+    "#SouthAfrica",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "Most of your customers will see your website on a phone, on data, on a weak signal."
+    }
+  ]
+}

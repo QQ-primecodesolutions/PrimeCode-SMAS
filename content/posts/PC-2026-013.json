@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-013",
+  "week": 7,
+  "publishDate": "2026-10-06",
+  "series": "Tech for Business",
+  "pillar": "Business Problems",
+  "topic": "When a spreadsheet stops being enough",
+  "audience": "SMEs with manual processes",
+  "objective": "Create demand",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Spreadsheets are excellent. Until four people need the same one at the same time.",
+  "caption": "",
+  "cta": "Still running your business on a spreadsheet? You're not alone — tell us what it tracks.",
+  "visualTemplate": "BIZ-01",
+  "visualBrief": "Slides: what spreadsheets do well / four warning signs / what a proper system changes.",
+  "hashtags": [
+    "#SmallBusiness",
+    "#BusinessTechnology",
+    "#CustomSoftware",
+    "#PrimeCodeSolutions"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "Spreadsheets are excellent. Until four people need the same one at the same time."
+    }
+  ]
+}

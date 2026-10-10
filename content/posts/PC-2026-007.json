@@ -1,0 +1,28 @@
+{
+  "contentId": "PC-2026-007",
+  "week": 4,
+  "publishDate": "2026-09-15",
+  "series": "PrimeCode Explains",
+  "pillar": "Education",
+  "topic": "What is an API? (explained without the jargon)",
+  "audience": "Business owners",
+  "objective": "Build technical credibility",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "Your booking system talks to your payment system. An API is how.",
+  "caption": "",
+  "cta": "Save this for the next time a developer says 'API'.",
+  "visualTemplate": "TECH-01",
+  "visualBrief": "Simple diagram: two boxes (your website / the payment provider) with an arrow labelled API. Use a restaurant-order analogy on slide 3.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#SoftwareDevelopment",
+    "#Technology"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "Your booking system talks to your payment system. An API is how."
+    }
+  ]
+}

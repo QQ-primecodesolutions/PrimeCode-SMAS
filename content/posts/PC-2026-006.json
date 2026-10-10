@@ -1,0 +1,29 @@
+{
+  "contentId": "PC-2026-006",
+  "week": 3,
+  "publishDate": "2026-09-11",
+  "series": "PrimeCode Services",
+  "pillar": "Services",
+  "topic": "From idea to working system: how a PrimeCode project starts",
+  "audience": "Entrepreneurs / SMEs",
+  "objective": "Reduce friction to enquiring",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "People think building software starts with code. It starts with a conversation.",
+  "caption": "",
+  "cta": "Have an idea sitting in your notes app? Send it to us.",
+  "visualTemplate": "BRAND-01",
+  "visualBrief": "Numbered process carousel: Conversation / Understanding the problem / Design / Build / Handover. Keep to 5 steps.",
+  "hashtags": [
+    "#CustomSoftware",
+    "#PrimeCodeSolutions",
+    "#Entrepreneurs",
+    "#SouthAfrica"
+  ],
+  "status": "IDEA",
+  "slides": [
+    {
+      "title": "People think building software starts with code. It starts with a conversation."
+    }
+  ]
+}
