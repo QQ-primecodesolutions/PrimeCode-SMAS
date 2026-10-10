@@ -1,8 +1,9 @@
 /**
  * Proposes new publish dates for the posts in content/posts/, in order, keeping each post's
- * Tuesday/Friday slot. Prints the plan; writes it only with --write.
+ * Tuesday/Friday slot. Prints the plan; writes it only with --write. --swap A,B exchanges two
+ * posts' places in the order first (they should share a weekday).
  *
- *   pnpm reschedule --from 2026-10-20 --skip 2026-12-22..2027-01-04 [--write]
+ *   pnpm reschedule --from 2026-10-20 --skip 2026-12-22..2027-01-04 [--swap PC-2026-004,PC-2026-012] [--write]
  */
 import { listPosts, writePostFile } from "@/lib/post/load";
 import { formatDate, reschedule } from "@/lib/post/schedule";
@@ -27,6 +28,12 @@ const skip = arg("skip").map((s) => {
 const posts = await listPosts();
 const done = posts.filter((p) => isApprovedOrLater(p.status) && p.status !== "APPROVED");
 if (done.length) throw new Error(`Already scheduled or published: ${done.map((p) => p.contentId).join(", ")}`);
+
+for (const pair of arg("swap")) {
+  const [a, b] = pair.split(",").map((id) => posts.findIndex((p) => p.contentId === id.trim()));
+  if (a === undefined || b === undefined || a < 0 || b < 0) throw new Error(`--swap ${pair}: use two existing ids, A,B`);
+  [posts[a], posts[b]] = [posts[b]!, posts[a]!];
+}
 
 const plan = reschedule(posts, from, skip);
 for (const [i, p] of plan.entries()) {
