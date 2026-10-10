@@ -1,0 +1,100 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+import { fontMetrics, measurer, type Measure } from "@/lib/graphics/metrics";
+import { INSIGHT, contentBox, insightModel, type Measures } from "@/lib/graphics/model";
+import { parseSize } from "@/lib/graphics/sizes";
+import { smartQuotes, wrapBalanced, wrapGreedy } from "@/lib/graphics/text";
+import { basePost } from "../post/fixtures";
+
+/** Every character 0.5em wide: easy arithmetic. */
+const half: Measure = (text, size) => [...text].length * 0.5 * size;
+const fake: Measures = { title: half, body: half, strong: half };
+
+describe("font metrics", () => {
+  const em = fontMetrics(readFileSync("assets/fonts/Inter-ExtraBold.ttf"));
+
+  it("reads advance widths from the font file", () => {
+    expect(em("M")).toBeGreaterThan(em("a"));
+    expect(em("a")).toBeGreaterThan(em("i"));
+    expect(em(" ")).toBe(em(" "));
+    expect(fontMetrics(readFileSync("assets/fonts/JetBrainsMono-Regular.ttf"))("W")).toBeCloseTo(0.6, 2);
+  });
+
+  it("adds letter-spacing per character", () => {
+    const m = measurer(() => 0.5, -0.1);
+    expect(m("abcd", 100)).toBeCloseTo(160);
+  });
+});
+
+describe("wrapping", () => {
+  it("breaks between words, never inside one", () => {
+    expect(wrapGreedy("aa bb cc", 60, 20, half)).toEqual(["aa bb", "cc"]);
+    expect(wrapGreedy("abcdefghijk", 100, 20, half)).toBeNull();
+  });
+
+  it("balances lines instead of leaving a lone word", () => {
+    expect(wrapGreedy("aaaa bbbb cccc dddd e", 75, 10, half)).toEqual(["aaaa bbbb cccc", "dddd e"]);
+    expect(wrapBalanced("aaaa bbbb cccc dddd e", 75, 10, half)).toEqual(["aaaa bbbb", "cccc dddd e"]);
+    expect(wrapGreedy("This page has been quiet.", 100, 10, half)).toEqual(["This page has been", "quiet."]);
+    expect(wrapBalanced("This page has been quiet.", 100, 10, half)).toEqual(["This page has", "been quiet."]);
+  });
+
+  it("uses typographic quotes", () => {
+    expect(smartQuotes(`doesn't "app" 'quoted'`)).toBe("doesn’t “app” ‘quoted’");
+  });
+});
+
+describe("sizes", () => {
+  it("defaults to feed and rejects unknown sizes", () => {
+    expect(parseSize(null)).toBe("feed");
+    expect(parseSize("story")).toBe("story");
+    expect(parseSize("poster")).toBeNull();
+  });
+
+  it("keeps stories clear of Instagram's top and bottom bars", () => {
+    expect(contentBox("story").height).toBeLessThan(1920 - 2 * 250);
+  });
+});
+
+describe("insightModel", () => {
+  const post = basePost({
+    visualTemplate: "INSIGHT-01",
+    cta: "Follow along.",
+    slides: [
+      { title: "Short." },
+      { title: "A much longer headline that needs several lines to fit", subtitle: "With support." },
+      { title: "Last", items: ["One", "Two"] },
+    ],
+  });
+
+  it("uses one headline size for every slide, fitted to the longest", () => {
+    const slides = insightModel(post, "feed", fake);
+    const sizes = new Set(slides.map((s) => s.title.fontSize));
+    expect(sizes.size).toBe(1);
+    expect([...sizes][0]).toBeLessThanOrEqual(INSIGHT.titleMax.feed);
+    expect(slides.every((s) => !s.overflow)).toBe(true);
+    // Every line fits the content width.
+    const { width } = contentBox("feed");
+    for (const s of slides) for (const line of s.title.lines) expect(half(line, s.title.fontSize)).toBeLessThanOrEqual(width);
+  });
+
+  it("counts slides and puts the CTA on the last one only", () => {
+    const slides = insightModel(post, "square", fake);
+    expect(slides.map((s) => s.counter)).toEqual(["1 / 3", "2 / 3", "3 / 3"]);
+    expect(slides.map((s) => s.cta?.lines.join(" ") ?? null)).toEqual([null, null, "Follow along."]);
+    expect(slides[2]!.items.map((b) => b.lines)).toEqual([["One"], ["Two"]]);
+  });
+
+  it("drops the counter on a single image", () => {
+    const [only] = insightModel(basePost({ format: "Single image", slides: [{ title: "One idea." }] }), "feed", fake);
+    expect(only?.counter).toBeNull();
+    expect(only?.cta).not.toBeNull();
+  });
+
+  it("flags copy too long to fit at the smallest size", () => {
+    const long = basePost({ slides: [{ title: "word ".repeat(400) }, { title: "ok" }] });
+    const slides = insightModel(long, "square", fake);
+    expect(slides[0]!.overflow).toBe(true);
+    expect(slides[1]!.overflow).toBe(false);
+  });
+});
