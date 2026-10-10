@@ -22,7 +22,8 @@
   "status": "IDEA",
   "slides": [
     {
-      "title": "Your business probably doesn't need an app. It might need three other things first."
+      "title": "Your business probably doesn't need an app.",
+      "subtitle": "It might need three other things first."
     }
   ]
 }

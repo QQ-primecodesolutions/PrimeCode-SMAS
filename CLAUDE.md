@@ -22,6 +22,15 @@ larger plan, kept for reference (template analysis §6, output specs, scope §13
   of truth.
 - `pnpm reschedule --from YYYY-MM-DD [--skip A..B] [--write]`: new Tue/Fri dates. Only `--write`
   saves them.
+- `pnpm export PC-2026-005 [more ids] [--size feed|square|story]`: writes `out/<id>/` (`01.png …`,
+  `caption-instagram.txt`, `caption-facebook.txt`, `hashtags.txt`). Non-feed sizes go to
+  `out/<id>/<size>/`.
+  - It refuses posts with pending client permission or an unbuilt template.
+  - It warns on any post that isn't cleared.
+- **Preview:**
+  - `/` lists the posts.
+  - `/post/<id>?size=` shows the slides at phone size, plus the captions.
+  - `/render/<id>/<n>.png?size=` serves one slide, uncached.
 
 ## Layout
 - `content/posts/PC-2026-NNN.json`: one file per post, validated by `lib/post/schema.ts`. Edit
@@ -68,6 +77,16 @@ next. Then render the posts that use it and show the PNGs.
 - **Fit:** pick one font size that fits the longest headline in a carousel, and use it on every
   slide.
 - **Fonts:** TTF, OTF or WOFF only, never WOFF2. Load them once per process.
+- **Kerning:** Satori's opentype.js applies only type 2 GPOS kerning lookups, and skips type 9
+  Extension lookups.
+  - Stock Inter keeps its main kerning in an Extension lookup, so it renders unkerned ("Y our").
+  - `assets/fonts/Inter-*.ttf` are rebuilt by `scripts/fonts/build_fonts.py`: subset to Latin,
+    with the Extension lookups unwrapped. Rebuild them the same way if you update Inter or add a
+    weight.
+- **Measuring:** `lib/graphics/metrics.ts` reads real advance widths from the TTFs, which wrapping
+  uses. It ignores kerning, so a measured line can only be wider than the rendered one.
+- **Quotes:** text goes through `smartQuotes` before measuring.
+- **Story safe zone:** keep about 250 px clear at the top and bottom of stories (`FRAME.padY`).
 - **Images:** pass them as data URIs; never use relative URLs.
 - **Sizes:** feed 1080×1350 (the default), square 1080×1080, story 1080×1920. Every slide in a
   carousel must be the same size.
