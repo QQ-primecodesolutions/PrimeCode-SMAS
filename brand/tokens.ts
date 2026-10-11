@@ -25,6 +25,19 @@ export const COLORS = {
 /** BIZ-01 marks: a tick for a sign or a good practice, a cross for a mistake. Both from the palette. */
 export const MARKS = { tick: COLORS.accent, cross: COLORS.violet } as const;
 
+/** Syntax colours for CODE-01 panels: light tints of the brand blue, cyan and violet on navy. */
+export const CODE_COLORS = {
+  plain: "#e2e8f0",
+  keyword: "#c4b5fd",
+  string: "#67e8f9",
+  comment: "#64748b",
+  number: "#a5f3fc",
+  function: "#93c5fd",
+  tag: "#60a5fa",
+  attr: "#c4b5fd",
+  punct: "#94a3b8",
+} as const;
+
 /** The website's brand gradient (`--gradient-primary`). */
 export const GRADIENT_PRIMARY = `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.accent} 100%)`;
 export const GRADIENT_DARK = `linear-gradient(160deg, ${COLORS.bg} 0%, ${COLORS.bg2} 100%)`;

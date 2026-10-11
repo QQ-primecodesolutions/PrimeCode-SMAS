@@ -63,7 +63,8 @@ The 8 codes are on the workbook's Reference sheet and in Brand Brain §22. The s
 template are separate fields: PC-001 is a Journey post drawn with INSIGHT-01, and JOURNEY-01 stays
 photo-led.
 
-**Built so far:** INSIGHT-01, BIZ-01, BRAND-01 and PROJECT-01. A slide's kind comes from its title:
+**Built so far:** INSIGHT-01, BIZ-01, BRAND-01, PROJECT-01, TECH-01 and CODE-01. A slide's kind
+comes from its title or its visual:
 - **BIZ-01:** a title like `"1. Customers ask…"` makes a sign slide. It gets a tick badge, its
   number, and a checklist along the bottom. Set `"mark": "cross"` on a slide for a mistake.
   Unnumbered slides are statements.
@@ -76,6 +77,17 @@ photo-led.
   - A slide with an `asset` shows that screenshot (`assets/shots/`, see its README) in a drawn
     device on a stage panel: a phone for portrait shots, a laptop for landscape ones.
   - A missing file shows a placeholder in the preview and blocks export.
+- **TECH-01 and CODE-01:**
+  - A slide with `diagram` shows it under the headline. A `flow` has 2 to 6 boxes, and a step's
+    `via` labels the arrow out of it. It's a row for up to 3 steps, a column for more. A `columns`
+    diagram has 2 or 3 comparison columns.
+  - A slide with `code` (`language`, `filename`, `source`, `highlight`) shows it as text in an
+    editor panel. Code is never a screenshot.
+  - Code shrinks to fit the panel but never goes below 22 px, so keep lines short (about 40
+    characters).
+  - TECH-01 puts the logo bottom-right, as the Reference sheet says.
+  - Each slide has at most one visual: `asset`, `diagram` or `code`.
+  - If copy overflows, the export warns. Fix it by cutting copy, not by shrinking the type.
 - **All templates:** the opening and closing slides use the INSIGHT-01 statement layout.
 
 Build one template end to end (model → layout → preview → export → tests) before starting the

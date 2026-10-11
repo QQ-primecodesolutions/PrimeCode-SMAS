@@ -4,8 +4,21 @@
  * paint on top).
  */
 import type { CSSProperties, ReactNode } from "react";
-import { COLORS, FONTS, GRADIENT_DARK, LOGO } from "@/brand/tokens";
-import { type Block, type Device, FRAME, LABEL, type SlideFrame, TYPE, type Text } from "./model";
+import { CODE_COLORS, COLORS, FONTS, GRADIENT_DARK, LOGO } from "@/brand/tokens";
+import {
+  type Block,
+  CODE,
+  type CodeModel,
+  type Device,
+  DIAGRAM,
+  type DiagramModel,
+  type FlowBox,
+  FRAME,
+  LABEL,
+  type SlideFrame,
+  TYPE,
+  type Text,
+} from "./model";
 import { nbsp, upper } from "./text";
 
 /** The site the logo links people to (PrimeCode/Web CNAME). */
@@ -67,18 +80,41 @@ export function DarkFrame({ frame, logo, children }: { frame: SlideFrame; logo: 
         color: COLORS.white,
       }}
     >
-      <div style={{ display: "flex", height: FRAME.top, alignItems: "center", justifyContent: "space-between" }}>
-        <LogoTile logo={logo} size={FRAME.top} />
-        <div style={{ ...label, display: "flex", color: COLORS.accent }}>{upper(frame.series)}</div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, marginTop: FRAME.gap, marginBottom: FRAME.gap }}>
+      {frame.logo === "top" ? (
+        <div style={{ display: "flex", height: FRAME.top, alignItems: "center", justifyContent: "space-between" }}>
+          <LogoTile logo={logo} size={FRAME.top} />
+          <div style={{ ...label, display: "flex", color: COLORS.accent }}>{upper(frame.series)}</div>
+        </div>
+      ) : (
+        // Logo bottom-right: the series and counter move up into a slim top bar.
+        <div style={{ ...label, display: "flex", height: FRAME.foot, alignItems: "flex-start", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", color: COLORS.accent }}>{upper(frame.series)}</div>
+          {frame.counter ? (
+            <div style={{ display: "flex", color: COLORS.lightMuted, fontWeight: 400, letterSpacing: "0.04em" }}>
+              {nbsp(frame.counter)}
+            </div>
+          ) : null}
+        </div>
+      )}
+      {/* Clips rather than pushing the footer off the slide if copy overflows (the export warns). */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          minHeight: 0,
+          overflow: "hidden",
+          marginTop: FRAME.gap,
+          marginBottom: FRAME.gap,
+        }}
+      >
         {children}
       </div>
       <div
         style={{
           ...label,
           display: "flex",
-          height: FRAME.foot,
+          height: frame.logo === "top" ? FRAME.foot : FRAME.top,
           alignItems: "flex-end",
           justifyContent: "space-between",
           color: COLORS.lightMuted,
@@ -87,7 +123,11 @@ export function DarkFrame({ frame, logo, children }: { frame: SlideFrame; logo: 
         }}
       >
         <div style={{ display: "flex" }}>{WEBSITE}</div>
-        {frame.counter ? <div style={{ display: "flex" }}>{nbsp(frame.counter)}</div> : null}
+        {frame.logo === "bottom" ? (
+          <LogoTile logo={logo} size={FRAME.top} />
+        ) : frame.counter ? (
+          <div style={{ display: "flex" }}>{nbsp(frame.counter)}</div>
+        ) : null}
       </div>
     </div>
   );
@@ -327,6 +367,176 @@ export function DeviceFrame({ device }: { device: Device }) {
             background: "#64748b",
           }}
         />
+      </div>
+    </div>
+  );
+}
+
+// Diagram primitives: box, arrow, label. ----------------------------------------------------------
+
+const BOX_FILL = "rgba(37, 99, 235, 0.14)";
+const BOX_EDGE = "2px solid rgba(6, 182, 212, 0.55)";
+
+/** A rounded box holding a label and an optional note. */
+export function Box({ box }: { box: FlowBox }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        width: box.width,
+        height: box.height,
+        padding: `${box.padY}px ${DIAGRAM.pad}px`,
+        borderRadius: DIAGRAM.radius,
+        background: BOX_FILL,
+        border: BOX_EDGE,
+      }}
+    >
+      <Lines block={box.label} style={{ fontWeight: 600 }} />
+      {box.note ? <Lines block={box.note} style={{ marginTop: DIAGRAM.noteGap, color: COLORS.lightMuted }} /> : null}
+    </div>
+  );
+}
+
+/** An arrow pointing right (row) or down (column), with an optional mono label. */
+export function Arrow({ length, direction, via }: { length: number; direction: "row" | "column"; via: string | null }) {
+  const head = 12;
+  const svg =
+    direction === "row" ? (
+      <svg width={length} height={24} viewBox={`0 0 ${length} 24`} fill="none" stroke={COLORS.accent} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+        <path d={`M6 12H${length - 6}`} />
+        <path d={`M${length - 6 - head} ${12 - head * 0.7}L${length - 6} 12L${length - 6 - head} ${12 + head * 0.7}`} />
+      </svg>
+    ) : (
+      <svg width={24} height={length} viewBox={`0 0 24 ${length}`} fill="none" stroke={COLORS.accent} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+        <path d={`M12 6V${length - 6}`} />
+        <path d={`M${12 - head * 0.7} ${length - 6 - head}L12 ${length - 6}L${12 + head * 0.7} ${length - 6 - head}`} />
+      </svg>
+    );
+  const viaLabel = via ? (
+    <div style={{ display: "flex", fontFamily: FONTS.mono, fontWeight: 600, fontSize: DIAGRAM.viaSize, color: COLORS.accent }}>
+      {upper(via)}
+    </div>
+  ) : null;
+  return direction === "row" ? (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: length }}>
+      {viaLabel}
+      {svg}
+    </div>
+  ) : (
+    <div style={{ display: "flex", alignItems: "center", height: length, paddingLeft: 40 }}>
+      {svg}
+      {viaLabel ? <div style={{ display: "flex", marginLeft: 16 }}>{viaLabel}</div> : null}
+    </div>
+  );
+}
+
+/** A diagram: boxes joined by arrows, or comparison columns. */
+export function DiagramView({ diagram }: { diagram: DiagramModel }) {
+  if (diagram.type === "columns") {
+    return (
+      <div style={{ display: "flex", width: diagram.width, height: diagram.height }}>
+        {diagram.columns.map((c, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: c.width,
+              height: c.height,
+              marginLeft: i === 0 ? 0 : DIAGRAM.columnGap,
+              padding: DIAGRAM.pad,
+              borderRadius: DIAGRAM.radius,
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "2px solid rgba(255, 255, 255, 0.12)",
+            }}
+          >
+            <Lines block={c.heading} style={{ fontWeight: 800, color: COLORS.accent, marginBottom: DIAGRAM.itemGap * 1.5 }} />
+            {c.items.map((item, j) => (
+              <div key={j} style={{ display: "flex", marginTop: j === 0 ? 0 : DIAGRAM.itemGap }}>
+                <div style={{ display: "flex", width: DIAGRAM.itemIndent, paddingTop: (item.fontSize * item.lineHeight) / 2 - 5 }}>
+                  <div style={{ display: "flex", width: 10, height: 10, borderRadius: 5, background: COLORS.accent }} />
+                </div>
+                <Lines block={item} style={{ color: COLORS.lightMuted }} />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  const row = diagram.direction === "row";
+  return (
+    <div style={{ display: "flex", flexDirection: row ? "row" : "column", width: diagram.width, height: diagram.height }}>
+      {diagram.boxes.map((box, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: row ? "row" : "column" }}>
+          {i > 0 ? <Arrow length={diagram.arrow} direction={diagram.direction} via={diagram.boxes[i - 1]!.via} /> : null}
+          <Box box={box} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Code panel. -------------------------------------------------------------------------------------
+
+/** Code as text in an editor window: tab with filename, line numbers, syntax colours. */
+export function CodePanel({ code }: { code: CodeModel }) {
+  const lineHeight = code.fontSize * CODE.lineHeight;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: code.width,
+        height: code.height,
+        borderRadius: 24,
+        background: "#0b1220",
+        border: "2px solid #1e293b",
+        fontFamily: FONTS.mono,
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", height: CODE.tab, padding: `0 ${CODE.padX}px`, background: "#111a2e" }}>
+        {[0, 1, 2].map((i) => (
+          <div key={i} style={{ display: "flex", width: 14, height: 14, borderRadius: 7, marginRight: 10, background: "#334155" }} />
+        ))}
+        {code.filename ? (
+          <div style={{ display: "flex", marginLeft: 18, fontSize: 22, color: COLORS.lightMuted }}>{code.filename}</div>
+        ) : null}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", padding: `${CODE.padY}px 0` }}>
+        {code.lines.map((line, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              height: lineHeight,
+              alignItems: "center",
+              padding: `0 ${CODE.padX}px`,
+              fontSize: code.fontSize,
+              background: code.highlight.includes(i + 1) ? "rgba(6, 182, 212, 0.14)" : "transparent",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: (code.gutter - 1) * code.fontSize * CODE.charEm,
+                marginRight: code.fontSize * CODE.charEm,
+                color: "#475569",
+              }}
+            >
+              {String(i + 1)}
+            </div>
+            {line.map((t, j) => (
+              <div key={j} style={{ display: "flex", color: CODE_COLORS[t.kind] }}>
+                {nbsp(t.text)}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );

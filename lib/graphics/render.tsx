@@ -9,7 +9,16 @@ import { FONTS } from "@/brand/tokens";
 import type { Post, TemplateCode } from "@/lib/post/schema";
 import { type SlideAssets, loadMedia, loadSlideAssets } from "./assets";
 import type { Media } from "./images";
-import { bizModel, brandModel, insightModel, type Measures, projectModel, type SlideModel, TYPE } from "./model";
+import {
+  bizModel,
+  brandModel,
+  insightModel,
+  type Measures,
+  projectModel,
+  type SlideModel,
+  TYPE,
+  techModel,
+} from "./model";
 import { SLIDE_SIZES, type SlideSize } from "./sizes";
 import { SlideCanvas } from "./templates/slide";
 
@@ -53,6 +62,8 @@ const TEMPLATES: Partial<Record<TemplateCode, Template>> = {
   "INSIGHT-01": async (post, size, assets) => views(insightModel(post, size, measures(assets)), assets),
   "BIZ-01": async (post, size, assets) => views(bizModel(post, size, measures(assets)), assets),
   "BRAND-01": async (post, size, assets) => views(brandModel(post, size, measures(assets)), assets),
+  "TECH-01": async (post, size, assets) => views(techModel(post, size, measures(assets)), assets),
+  "CODE-01": async (post, size, assets) => views(techModel(post, size, measures(assets)), assets),
   "PROJECT-01": async (post, size, assets) =>
     views(projectModel(post, size, measures(assets), await loadSlideMedia(post)), assets),
 };

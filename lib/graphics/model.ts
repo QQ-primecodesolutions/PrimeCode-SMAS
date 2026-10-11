@@ -3,8 +3,9 @@
  * counter, CTA).
  * No file or font access; text widths come in through `measure`, so this is unit-tested with a fake.
  */
-import type { Post, Slide } from "@/lib/post/schema";
+import type { Code, Diagram, Post, Slide, TemplateCode } from "@/lib/post/schema";
 import { SERVICES, type ServiceKey, serviceOf } from "@/lib/post/services";
+import { highlightLines, type Token } from "./code";
 import type { Media } from "./images";
 import type { Measure } from "./metrics";
 import { SLIDE_SIZES, type SlideSize } from "./sizes";
@@ -49,7 +50,12 @@ export type SlideFrame = {
   counter: string | null;
   isLast: boolean;
   series: string;
+  /** Where the logo tile sits. TECH-01 puts it bottom-right (Reference sheet); the rest top-left. */
+  logo: "top" | "bottom";
 };
+
+/** Templates whose design direction puts the logo bottom-right. */
+const LOGO_BOTTOM: readonly TemplateCode[] = ["TECH-01"];
 
 export function slideFrame(post: Post, index: number, size: SlideSize): SlideFrame {
   const total = post.slides.length;
@@ -61,6 +67,7 @@ export function slideFrame(post: Post, index: number, size: SlideSize): SlideFra
     counter: total > 1 ? `${index + 1} / ${total}` : null,
     isLast: index === total - 1,
     series: post.series,
+    logo: LOGO_BOTTOM.includes(post.visualTemplate) ? "bottom" : "top",
   };
 }
 
@@ -142,6 +149,76 @@ export const DEVICE = {
 /** A section label above a headline ("THE PROBLEM"), set in mono. */
 export const LABEL = { size: 30, lineHeight: 1.2, height: 36 } as const;
 
+/** Diagrams (TECH-01, CODE-01): boxes, arrows, labels, comparison columns. */
+export const DIAGRAM = {
+  /** Box label size: this fraction of the headline, within [min, max]. */
+  labelRatio: 0.36,
+  labelMin: 28,
+  labelMax: 40,
+  lineHeight: 1.25,
+  /** Notes and column items, as a fraction of the label size. */
+  noteRatio: 0.8,
+  noteMin: 24,
+  pad: 26,
+  radius: 22,
+  /** Space between a box's label and its note. */
+  noteGap: 8,
+  /** Arrow length between boxes (row) or between rows (column). */
+  arrow: 72,
+  arrowColumn: 44,
+  /** Vertical padding of boxes in a column flow, kept tight so long flows stay short. */
+  padColumn: 16,
+  /** Arrow labels ("API"), in mono. */
+  viaSize: 24,
+  columnGap: 28,
+  itemGap: 14,
+  /** Column item marker column. */
+  itemIndent: 28,
+} as const;
+
+/** Code panels (CODE-01): an editor window with a tab, line numbers and highlighted code. */
+export const CODE = {
+  max: 34,
+  /** Smallest code size that still reads on a phone; longer lines mean the snippet must shrink. */
+  min: 22,
+  lineHeight: 1.55,
+  tab: 64,
+  padX: 32,
+  padY: 26,
+  /** Mono advance width in em (JetBrains Mono: every glyph is 0.6 em). */
+  charEm: 0.6,
+} as const;
+
+export type FlowBox = {
+  label: Block;
+  note: Block | null;
+  via: string | null;
+  width: number;
+  height: number;
+  /** Vertical padding. */
+  padY: number;
+};
+export type DiagramModel =
+  | { type: "flow"; direction: "row" | "column"; boxes: FlowBox[]; arrow: number; width: number; height: number }
+  | {
+      type: "columns";
+      columns: { heading: Block; items: Block[]; width: number; height: number }[];
+      width: number;
+      height: number;
+    };
+
+export type CodeModel = {
+  filename: string | null;
+  lines: Token[][];
+  /** 1-based lines to highlight. */
+  highlight: number[];
+  fontSize: number;
+  /** Width of the line-number gutter in characters. */
+  gutter: number;
+  width: number;
+  height: number;
+};
+
 /** Headline, supporting text and list, already wrapped. */
 export type Text = {
   /** Mono label above the headline, in place of the accent rule. */
@@ -190,7 +267,9 @@ export type SignSlide = SlideFrame &
   };
 export type ServiceSlide = SlideFrame & Common & { kind: "service"; service: ServiceKey; text: Text };
 export type DeviceSlide = SlideFrame & Common & { kind: "device"; device: Device; text: Text };
-export type SlideModel = StatementSlide | SignSlide | ServiceSlide | DeviceSlide;
+export type DiagramSlide = SlideFrame & Common & { kind: "diagram"; diagram: DiagramModel; text: Text };
+export type CodeSlide = SlideFrame & Common & { kind: "code"; code: CodeModel; text: Text };
+export type SlideModel = StatementSlide | SignSlide | ServiceSlide | DeviceSlide | DiagramSlide | CodeSlide;
 
 /** Omit applied to each member of a union, keeping the members apart. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -268,7 +347,86 @@ type Kind =
   | { kind: "statement"; label?: string; title?: string; supporting?: string }
   | { kind: "sign"; number: string; title: string }
   | { kind: "service"; service: ServiceKey }
-  | { kind: "device"; asset: string; media: Media | null; label?: string; title?: string; supporting?: string };
+  | { kind: "device"; asset: string; media: Media | null; label?: string; title?: string; supporting?: string }
+  | { kind: "diagram"; diagram: Diagram }
+  | { kind: "code"; code: Code };
+
+const clamp = (v: number, lo: number, hi: number) => Math.round(Math.min(hi, Math.max(lo, v)));
+
+/** Lays out a flow or comparison at the given headline size; null if a word won't fit a box. */
+function layoutDiagram(ctx: Ctx, diagram: Diagram, width: number): DiagramModel | null {
+  const L = clamp(ctx.titleSize * DIAGRAM.labelRatio, DIAGRAM.labelMin, DIAGRAM.labelMax);
+  const N = Math.max(DIAGRAM.noteMin, Math.round(L * DIAGRAM.noteRatio));
+  const inner = (w: number) => w - 2 * DIAGRAM.pad;
+
+  if (diagram.type === "columns") {
+    const n = diagram.columns.length;
+    const w = Math.floor((width - (n - 1) * DIAGRAM.columnGap) / n);
+    const columns = [];
+    for (const c of diagram.columns) {
+      const heading = block(ctx, c.heading, inner(w), L, DIAGRAM.lineHeight, ctx.m.title);
+      if (!heading) return null;
+      const items: Block[] = [];
+      for (const item of c.items) {
+        const b = block(ctx, item, inner(w) - DIAGRAM.itemIndent, N, DIAGRAM.lineHeight, ctx.m.body);
+        if (!b) return null;
+        items.push(b);
+      }
+      const h =
+        2 * DIAGRAM.pad +
+        blockHeight(heading) +
+        DIAGRAM.itemGap * 1.5 +
+        items.reduce((sum, b) => sum + blockHeight(b), 0) +
+        (items.length - 1) * DIAGRAM.itemGap;
+      columns.push({ heading, items, width: w, height: Math.ceil(h) });
+    }
+    const height = Math.max(...columns.map((c) => c.height));
+    return { type: "columns", columns: columns.map((c) => ({ ...c, height })), width, height };
+  }
+
+  const n = diagram.steps.length;
+  const direction = diagram.direction ?? (n <= 3 ? "row" : "column");
+  const viaWidth = Math.max(0, ...diagram.steps.map((s) => (s.via ? s.via.length * DIAGRAM.viaSize * CODE.charEm : 0)));
+  const arrow = direction === "row" ? Math.max(DIAGRAM.arrow, Math.ceil(viaWidth + 24)) : DIAGRAM.arrowColumn;
+  const w = direction === "row" ? Math.floor((width - (n - 1) * arrow) / n) : width;
+  const boxes: FlowBox[] = [];
+  for (const step of diagram.steps) {
+    const label = block(ctx, step.label, inner(w), L, DIAGRAM.lineHeight, ctx.m.strong);
+    if (!label) return null;
+    const note = step.note ? block(ctx, step.note, inner(w), N, DIAGRAM.lineHeight, ctx.m.body) : null;
+    if (step.note && !note) return null;
+    const padY = direction === "row" ? DIAGRAM.pad : DIAGRAM.padColumn;
+    const h = 2 * padY + blockHeight(label) + (note ? DIAGRAM.noteGap + blockHeight(note) : 0);
+    boxes.push({ label, note, via: step.via ?? null, width: w, height: Math.ceil(h), padY });
+  }
+  if (direction === "row") {
+    const height = Math.max(...boxes.map((b) => b.height));
+    return { type: "flow", direction, boxes: boxes.map((b) => ({ ...b, height })), arrow, width, height };
+  }
+  const height = boxes.reduce((sum, b) => sum + b.height, 0) + (n - 1) * arrow;
+  return { type: "flow", direction, boxes, arrow, width, height };
+}
+
+/** Sizes the code to fit the panel width; null if it would have to go below `CODE.min`. */
+function layoutCode(ctx: Ctx, code: Code, width: number): CodeModel | null {
+  const lines = highlightLines(code.source, code.language);
+  const longest = Math.max(1, ...lines.map((l) => l.reduce((n, t) => n + t.text.length, 0)));
+  const gutter = String(lines.length).length + 2;
+  const fit = Math.floor((width - 2 * CODE.padX) / ((longest + gutter) * CODE.charEm));
+  const fontSize = Math.min(CODE.max, fit);
+  if (fontSize < CODE.min && !ctx.lenient) return null;
+  const size = Math.max(fontSize, ctx.lenient ? CODE.min : fontSize);
+  const height = CODE.tab + 2 * CODE.padY + lines.length * size * CODE.lineHeight;
+  return {
+    filename: code.filename ?? null,
+    lines,
+    highlight: code.highlight ?? [],
+    fontSize: size,
+    gutter,
+    width,
+    height: Math.ceil(height),
+  };
+}
 
 /** Fits a phone or laptop into `maxHeight` x `maxWidth`, with `media` covering its screen. */
 export function deviceGeometry(
@@ -366,6 +524,19 @@ function layoutSlide(
     const text = layoutText(ctx, name, supportingOf(slide), slide.items ?? []);
     if (!text || !fits(BRAND.tile + gap + textHeight(text))) return null;
     return { ...frame, ...common, kind: "service", service: kind.service, text };
+  }
+
+  if (kind.kind === "diagram" || kind.kind === "code") {
+    const text = layoutText(ctx, slide.title, supportingOf(slide), slide.items ?? []);
+    if (!text) return null;
+    if (kind.kind === "diagram") {
+      const diagram = layoutDiagram(ctx, kind.diagram, box.width);
+      if (!diagram || !fits(textHeight(text) + gap + diagram.height)) return null;
+      return { ...frame, ...common, kind: "diagram", diagram, text };
+    }
+    const code = layoutCode(ctx, kind.code, box.width);
+    if (!code || !fits(textHeight(text) + gap + code.height)) return null;
+    return { ...frame, ...common, kind: "code", code, text };
   }
 
   if (kind.kind === "device") {
@@ -480,4 +651,17 @@ export function projectModel(
   media: ReadonlyMap<string, Media | null>,
 ): SlideModel[] {
   return fitCarousel(post, size, m, (slide) => projectKind(slide, media), noBottom);
+}
+
+// TECH-01 and CODE-01: a question headline, diagrams from box/arrow/label primitives, code as text.
+
+/** Slides with a `diagram` or `code` show it; the rest are statements. */
+export function visualKind(slide: Slide): Kind {
+  if (slide.diagram) return { kind: "diagram", diagram: slide.diagram };
+  if (slide.code) return { kind: "code", code: slide.code };
+  return { kind: "statement" };
+}
+
+export function techModel(post: Post, size: SlideSize, m: Measures): SlideModel[] {
+  return fitCarousel(post, size, m, visualKind, noBottom);
 }
