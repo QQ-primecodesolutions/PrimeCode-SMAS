@@ -1,16 +1,22 @@
 import Link from "next/link";
 import { connection } from "next/server";
+import { requireSignedIn } from "@/lib/auth";
 import { isTemplateBuilt } from "@/lib/graphics/render";
 import { listPosts } from "@/lib/post/load";
 import { formatDate } from "@/lib/post/schedule";
+import { LogoutButton } from "./logout-button";
 import { StatusBadge } from "./status-badge";
 
 export default async function Home() {
   await connection();
+  await requireSignedIn("/");
   const posts = await listPosts();
   return (
     <main className="mx-auto max-w-5xl p-6">
-      <h1 className="text-2xl font-bold">PrimeCode Studio</h1>
+      <div className="flex items-baseline justify-between">
+        <h1 className="text-2xl font-bold">PrimeCode Studio</h1>
+        <LogoutButton />
+      </div>
       <p className="mb-6 text-text-secondary">
         {posts.length} posts. Dates are Africa/Johannesburg. Export with <code>pnpm export PC-2026-NNN</code>.
       </p>

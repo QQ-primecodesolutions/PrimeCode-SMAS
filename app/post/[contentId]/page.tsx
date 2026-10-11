@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { requireSignedIn } from "@/lib/auth";
 import { isTemplateBuilt, renderToken, slideViews } from "@/lib/graphics/render";
 import { DEFAULT_SIZE, SIZE_LABELS, SLIDE_SIZES, isSlideSize, type SlideSize } from "@/lib/graphics/sizes";
 import { listPosts } from "@/lib/post/load";
@@ -15,6 +16,7 @@ const PREVIEW_WIDTH = 300;
 export default async function PostPage(props: PageProps<"/post/[contentId]">) {
   await connection();
   const { contentId } = await props.params;
+  await requireSignedIn(`/post/${contentId}`);
   const query = await props.searchParams;
   const size: SlideSize = isSlideSize(query.size) ? query.size : DEFAULT_SIZE;
 

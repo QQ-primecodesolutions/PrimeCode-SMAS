@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { isSignedIn } from "@/lib/auth";
 import { renderSlide, TemplateNotBuiltError } from "@/lib/graphics/render";
 import { parseSize } from "@/lib/graphics/sizes";
 import { loadPost } from "@/lib/post/load";
@@ -8,6 +9,7 @@ const text = (status: number, body: string) =>
 
 /** GET /render/PC-2026-001/1.png?size=feed|square|story: one slide as a PNG, never cached. */
 export async function GET(req: NextRequest, ctx: RouteContext<"/render/[contentId]/[slide]">) {
+  if (!(await isSignedIn())) return text(401, "Sign in first.");
   const { contentId, slide } = await ctx.params;
   const size = parseSize(req.nextUrl.searchParams.get("size"));
   const n = /^(\d{1,2})\.png$/.exec(slide)?.[1];

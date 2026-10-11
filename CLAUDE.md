@@ -156,6 +156,27 @@ next. Then render the posts that use it and show the PNGs.
 - **Dates:** posts go out on Tuesdays (value) and Fridays (PrimeCode). Every date shown uses
   `Africa/Johannesburg`.
 
+## Login and deployment (Vercel)
+The deployed studio shows drafts, client names awaiting permission and internal notes, so it is
+founder-only. This follows the founder's login security checklist (`~/.claude/CLAUDE.md`).
+- **`lib/auth/`:**
+  - The session is HMAC-signed with `node:crypto` (no `jose`) and stored in an httpOnly, Secure,
+    SameSite=Lax cookie on `/` with a fixed 14-day expiry.
+  - The password is compared in constant time.
+  - Lockout: 5 failed attempts per IP in 15 minutes, plus a global cap of 100. The counts live in
+    Upstash Redis through its REST API with plain `fetch` (no SDK).
+- **Env vars:** see `.env.example`.
+  - Production refuses to run open or with in-memory counts. Missing settings mean nobody can log
+    in.
+  - Locally, with no `AUTH_SECRET`, `pnpm dev` stays open.
+- **`proxy.ts`:** an early redirect only. Every page, the render route and the Server Actions check
+  again (`requireSignedIn`, `isSignedIn`).
+- **`safeNext`:** only same-site paths with no whitespace or control characters, so links can't
+  redirect off-site or break the `Location` header.
+- **Deploy:** the founder pushes to GitHub, and Vercel builds from the repo. Content changes are
+  commits, so the deployed site is read-only (the export stays a local command).
+- **Next feature:** individual accounts before anyone else gets access (checklist).
+
 ## Git
 - Commit locally only. Never push or open PRs; the founder pushes.
 - **Never add `Co-Authored-By` or any other attribution trailer** to commit messages.
