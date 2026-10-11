@@ -23,7 +23,10 @@
   "status": "IDEA",
   "slides": [
     {
-      "title": "I kept seeing good businesses here losing customers for one avoidable reason."
+      "title": "I kept seeing good businesses here losing customers for one avoidable reason.",
+      "asset": "photos/founder-desk.jpg",
+      "assetAlt": "Retshidi at the desk with a laptop"
     }
-  ]
+  ],
+  "notes": "The caption is the founder's own story: write it in your words. Needs a real photo at assets/photos/founder-desk.jpg (not stock)."
 }

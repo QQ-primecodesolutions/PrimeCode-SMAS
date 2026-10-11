@@ -22,7 +22,10 @@
   "status": "IDEA",
   "slides": [
     {
-      "title": "The hardest part of this work has never been the code."
+      "title": "The hardest part of this work has never been the code.",
+      "asset": "photos/workspace.jpg",
+      "assetAlt": "The PrimeCode workspace"
     }
-  ]
+  ],
+  "notes": "The caption is the founder's own reflection: write it in your words. Needs a real workspace photo at assets/photos/workspace.jpg."
 }

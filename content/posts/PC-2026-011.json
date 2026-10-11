@@ -10,7 +10,7 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "Imagine a gym in Phuthaditjhaba where members sign up from their phones.",
-  "caption": "",
+  "caption": "Imagine a gym in Phuthaditjhaba where members sign up from their phones.\n\nThis is an illustrative concept, not a real client. But plenty of small businesses still run this way: sign-ups on paper, payments counted by hand, and renewals that depend on someone remembering.\n\nA simple web application could change that. Members sign up and pay from their phones. The owner sees who has paid and who needs a reminder.\n\nNone of it needs to be complicated. It needs to fit how the business already works.\n\nWhich local business would you most like to see do this?",
   "cta": "Which local business would you most like to see do this?",
   "visualTemplate": "LOCAL-01",
   "visualBrief": "Before/after concept frames. Keep it clearly illustrative — do not imply a real client unless one has agreed.",
@@ -20,11 +20,53 @@
     "#DigitalTransformation",
     "#SmallBusiness"
   ],
-  "status": "IDEA",
-  "notes": "Illustrative only: must not read as BZ Fitness or any real client unless one has agreed.",
+  "status": "DRAFT",
+  "notes": "Illustrative only: must not read as BZ Fitness or any real client. Every slide carries the 'Illustrative concept' badge. The cover needs a local photo at assets/photos/phuthaditjhaba-street.jpg (a street or skyline, not a real gym).",
   "slides": [
     {
-      "title": "Imagine a gym in Phuthaditjhaba where members sign up from their phones."
+      "title": "What if your local gym had online membership?",
+      "asset": "photos/phuthaditjhaba-street.jpg",
+      "assetAlt": "A street in Phuthaditjhaba"
+    },
+    {
+      "title": "Picture a gym in Phuthaditjhaba.",
+      "subtitle": "Sign-ups on paper. Payments counted by hand. Renewals that depend on someone remembering."
+    },
+    {
+      "title": "Before and after",
+      "diagram": {
+        "type": "columns",
+        "columns": [
+          {
+            "heading": "Today",
+            "items": [
+              "Paper sign-up forms",
+              "Cash at the front desk",
+              "Renewals forgotten"
+            ]
+          },
+          {
+            "heading": "What if",
+            "items": [
+              "Sign up on a phone",
+              "Pay online or in person",
+              "A reminder before renewal"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "What it would take",
+      "items": [
+        "A website with a sign-up form",
+        "Payments through a payment provider",
+        "A members list the owner can see"
+      ]
+    },
+    {
+      "title": "Which business should go next?",
+      "subtitle": "A salon? A taxi rank? A school tuck shop?"
     }
   ]
 }
