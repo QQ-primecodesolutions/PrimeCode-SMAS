@@ -22,6 +22,9 @@ export const COLORS = {
   white: "#ffffff",
 } as const;
 
+/** BIZ-01 marks: a tick for a sign or a good practice, a cross for a mistake. Both from the palette. */
+export const MARKS = { tick: COLORS.accent, cross: COLORS.violet } as const;
+
 /** The website's brand gradient (`--gradient-primary`). */
 export const GRADIENT_PRIMARY = `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.accent} 100%)`;
 export const GRADIENT_DARK = `linear-gradient(160deg, ${COLORS.bg} 0%, ${COLORS.bg2} 100%)`;

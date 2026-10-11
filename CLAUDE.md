@@ -63,6 +63,15 @@ The 8 codes are on the workbook's Reference sheet and in Brand Brain §22. The s
 template are separate fields: PC-001 is a Journey post drawn with INSIGHT-01, and JOURNEY-01 stays
 photo-led.
 
+**Built so far:** INSIGHT-01, BIZ-01 and BRAND-01. A slide's kind comes from its title:
+- **BIZ-01:** a title like `"1. Customers ask…"` makes a sign slide. It gets a tick badge, its
+  number, and a checklist along the bottom. Set `"mark": "cross"` on a slide for a mistake.
+  Unnumbered slides are statements.
+- **BRAND-01:** a title that names one of our four services (`"WEBSITES"`, `"Web apps"`) makes a
+  service slide. It shows the service's icon and its canonical name. If a post lists any services,
+  every slide shows the four-service grid along the bottom.
+- **All templates:** the opening and closing slides use the INSIGHT-01 statement layout.
+
 Build one template end to end (model → layout → preview → export → tests) before starting the
 next. Then render the posts that use it and show the PNGs.
 
@@ -71,6 +80,7 @@ next. Then render the posts that use it and show the PNGs.
   - Any element with more than one child needs `display: flex`.
   - There's no `z-index`: later siblings paint on top, so put overlays after the background.
   - There's no `space-evenly`. Satori supports only a subset of CSS, so test each new property.
+  - `backgroundImage: "none"` throws. Leave the property out instead.
 - **Kerning:** text is kerned unevenly across ordinary spaces. Render headings with no-break spaces
   (`upper()`) or as pre-wrapped lines (`<Words>`).
 - **Wrapping:** compute line breaks yourself from an average character width, never mid-word.

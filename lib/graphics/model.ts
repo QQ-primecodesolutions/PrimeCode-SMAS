@@ -1,11 +1,13 @@
 /**
- * Pure view models: post + size → what each slide draws (wrapped lines, font sizes, counter, CTA).
+ * Pure view models: post + size → what each slide draws (slide kind, wrapped lines, font sizes,
+ * counter, CTA).
  * No file or font access; text widths come in through `measure`, so this is unit-tested with a fake.
  */
-import type { Post } from "@/lib/post/schema";
+import type { Post, Slide } from "@/lib/post/schema";
+import { SERVICES, type ServiceKey, serviceOf } from "@/lib/post/services";
 import type { Measure } from "./metrics";
 import { SLIDE_SIZES, type SlideSize } from "./sizes";
-import { smartQuotes, wrapBalanced } from "./text";
+import { smartQuotes, wrapBalanced, wrapLoose } from "./text";
 
 /** The frame every template shares (lib/graphics/parts.tsx draws it). */
 export const FRAME = {
@@ -61,6 +63,7 @@ export function slideFrame(post: Post, index: number, size: SlideSize): SlideFra
   };
 }
 
+
 export type Block = { lines: string[]; fontSize: number; lineHeight: number };
 
 export const blockHeight = (b: Block) => b.lines.length * b.fontSize * b.lineHeight;
@@ -74,10 +77,9 @@ export type Measures = {
   strong: Measure;
 };
 
-// INSIGHT-01: typography only; the sentence is the design. --------------------------------------
-
-export const INSIGHT = {
-  /** Largest and smallest headline size per output size; one size is used for the whole carousel. */
+/** Typography shared by every template. */
+export const TYPE = {
+  /** Largest headline size per output size; one size is used for the whole carousel. */
   titleMax: { feed: 120, square: 104, story: 128 } satisfies Record<SlideSize, number>,
   titleMin: 48,
   titleLineHeight: 1.08,
@@ -88,9 +90,9 @@ export const INSIGHT = {
   subMin: 36,
   subMax: 54,
   subLineHeight: 1.35,
-  /** Space between headline and supporting text (and above the headline, under the accent rule), as a fraction of the headline size. */
-  subGap: 0.45,
-  /** Height of the accent rule above the headline. */
+  /** Space between stacked elements (rule, headline, supporting text), as a fraction of the headline size. */
+  gap: 0.45,
+  /** Height of the accent rule above a statement headline. */
   rule: 10,
   itemGap: 0.5,
   /** List marker column, as a fraction of the item size. */
@@ -99,100 +101,231 @@ export const INSIGHT = {
   ctaLineHeight: 1.3,
   /** CTA left rule plus its padding. */
   ctaIndent: 34,
-  /** Minimum space between the text and the CTA. */
+  /** Minimum space above the CTA. */
   ctaGap: 64,
 } as const;
 
-export type InsightSlide = SlideFrame & {
-  title: Block;
-  subtitle: Block | null;
-  items: Block[];
+/** BIZ-01: tick/cross badge, sign number and the checklist along the bottom. */
+export const BIZ = {
+  badge: 96,
+  numberSize: 72,
+  check: 40,
+  checkGap: 14,
+  /** Space above the checklist. */
+  checklistGap: 56,
+} as const;
+
+/** BRAND-01: service icon tile and the four-service grid along the bottom. */
+export const BRAND = {
+  tile: 136,
+  gridTile: 84,
+  gridLabel: 20,
+  /** Tile + label + the space between them. */
+  gridHeight: 84 + 14 + 26,
+  /** Space above the grid. */
+  gridGap: 56,
+} as const;
+
+/** Headline, supporting text and list, already wrapped. */
+export type Text = { title: Block; subtitle: Block | null; items: Block[] };
+
+type Common = {
   /** The post's call to action, on the final slide only. */
   cta: Block | null;
+  /** BRAND-01 posts that list services: the grid along the bottom, with this slide's service lit. */
+  grid: { active: ServiceKey | null } | null;
   /** True when even the smallest headline size didn't fit; the slide needs shorter copy. */
   overflow: boolean;
 };
 
-function layoutInsight(
-  post: Post,
-  index: number,
-  size: SlideSize,
-  titleSize: number,
-  m: Measures,
-): Omit<InsightSlide, "overflow"> | null {
-  const box = contentBox(size);
-  const raw = post.slides[index]!;
-  const slide = {
-    ...raw,
-    title: smartQuotes(raw.title),
-    subtitle: raw.subtitle && smartQuotes(raw.subtitle),
-    body: raw.body && smartQuotes(raw.body),
-    items: raw.items?.map(smartQuotes),
+export type StatementSlide = SlideFrame & Common & { kind: "statement"; text: Text };
+export type Mark = "tick" | "cross";
+export type SignSlide = SlideFrame &
+  Common & {
+    kind: "sign";
+    number: string;
+    mark: Mark;
+    /** Every numbered slide's mark, and whether the reader has reached it yet. */
+    checklist: { mark: Mark; done: boolean }[];
+    text: Text;
   };
-  const frame = slideFrame(post, index, size);
-  const sub = Math.round(Math.min(INSIGHT.subMax, Math.max(INSIGHT.subMin, titleSize * INSIGHT.subRatio)));
+export type ServiceSlide = SlideFrame & Common & { kind: "service"; service: ServiceKey; text: Text };
+export type SlideModel = StatementSlide | SignSlide | ServiceSlide;
 
-  const titleLines = wrapBalanced(slide.title, box.width, titleSize, m.title);
-  if (!titleLines) return null;
-  const title = { lines: titleLines, fontSize: titleSize, lineHeight: INSIGHT.titleLineHeight };
+/** Omit applied to each member of a union, keeping the members apart. */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
-  const supporting = [slide.subtitle, slide.body].filter(Boolean).join(" ");
-  let subtitle: Block | null = null;
+/** A slide before the carousel fit decides `overflow`. */
+type Laid = DistributiveOmit<SlideModel, "overflow">;
+
+type Ctx = {
+  post: Post;
+  index: number;
+  size: SlideSize;
+  titleSize: number;
+  m: Measures;
+  /** Last resort: wrap even where a word is too wide and skip the height check. */
+  lenient: boolean;
+};
+
+const subSize = (titleSize: number) => Math.round(Math.min(TYPE.subMax, Math.max(TYPE.subMin, titleSize * TYPE.subRatio)));
+
+function wrap(ctx: Ctx, text: string, width: number, fontSize: number, measure: Measure): string[] | null {
+  return wrapBalanced(text, width, fontSize, measure) ?? (ctx.lenient ? wrapLoose(text, width, fontSize, measure) : null);
+}
+
+function block(ctx: Ctx, text: string, width: number, fontSize: number, lineHeight: number, measure: Measure): Block | null {
+  const lines = wrap(ctx, smartQuotes(text), width, fontSize, measure);
+  return lines && { lines, fontSize, lineHeight };
+}
+
+/** Headline, supporting text and list items; null if a word is too wide. */
+function layoutText(ctx: Ctx, title: string, supporting: string, items: readonly string[]): Text | null {
+  const width = contentBox(ctx.size).width;
+  const sub = subSize(ctx.titleSize);
+  const t = block(ctx, title, width, ctx.titleSize, TYPE.titleLineHeight, ctx.m.title);
+  if (!t) return null;
+  let s: Block | null = null;
   if (supporting) {
-    const lines = wrapBalanced(supporting, box.width, sub, m.body);
-    if (!lines) return null;
-    subtitle = { lines, fontSize: sub, lineHeight: INSIGHT.subLineHeight };
+    s = block(ctx, supporting, width, sub, TYPE.subLineHeight, ctx.m.body);
+    if (!s) return null;
+  }
+  const list: Block[] = [];
+  for (const item of items) {
+    const b = block(ctx, item, width - sub * TYPE.itemIndent, sub, TYPE.subLineHeight, ctx.m.strong);
+    if (!b) return null;
+    list.push(b);
+  }
+  return { title: t, subtitle: s, items: list };
+}
+
+export function textHeight(text: Text): number {
+  const gap = text.title.fontSize * TYPE.gap;
+  const { items } = text;
+  return (
+    blockHeight(text.title) +
+    (text.subtitle ? gap + blockHeight(text.subtitle) : 0) +
+    (items.length
+      ? gap + items.reduce((h, b) => h + blockHeight(b), 0) + (items.length - 1) * items[0]!.fontSize * TYPE.itemGap
+      : 0)
+  );
+}
+
+const supportingOf = (slide: Slide) => [slide.subtitle, slide.body].filter(Boolean).join(" ");
+
+const SIGN = /^(\d{1,2})[.)]\s+(.+)$/s;
+
+type Kind =
+  | { kind: "statement" }
+  | { kind: "sign"; number: string; title: string }
+  | { kind: "service"; service: ServiceKey };
+
+/**
+ * Lays out one slide at a headline size. `kindOf` decides what the slide is; `bottom` is the height
+ * of whatever the template draws along the bottom of every slide (BRAND-01's grid).
+ */
+function layoutSlide(
+  ctx: Ctx,
+  kind: Kind,
+  bottom: { height: number; grid: Common["grid"] },
+): Laid | null {
+  const { post, index, size, titleSize } = ctx;
+  const slide = post.slides[index]!;
+  const frame = slideFrame(post, index, size);
+  const box = contentBox(size);
+  const gap = titleSize * TYPE.gap;
+
+  const cta = frame.isLast
+    ? block(ctx, post.cta, box.width - TYPE.ctaIndent, TYPE.ctaSize, TYPE.ctaLineHeight, ctx.m.strong)
+    : null;
+  if (frame.isLast && !cta) return null;
+  const reserved = (cta ? TYPE.ctaGap + blockHeight(cta) : 0) + bottom.height;
+  const fits = (height: number) => ctx.lenient || height + reserved <= box.height;
+  const common = { cta, grid: bottom.grid };
+
+  if (kind.kind === "sign") {
+    const text = layoutText(ctx, kind.title, supportingOf(slide), slide.items ?? []);
+    const checklist = BIZ.checklistGap + BIZ.check;
+    if (!text || !fits(BIZ.badge + gap + textHeight(text) + checklist)) return null;
+    const signs = post.slides.filter((s) => SIGN.test(s.title));
+    const at = signs.indexOf(slide);
+    return {
+      ...frame,
+      ...common,
+      kind: "sign",
+      number: kind.number.padStart(2, "0"),
+      mark: slide.mark ?? "tick",
+      checklist: signs.map((s, i) => ({ mark: s.mark ?? "tick", done: i <= at })),
+      text,
+    };
   }
 
-  const items: Block[] = [];
-  for (const item of slide.items ?? []) {
-    const lines = wrapBalanced(item, box.width - sub * INSIGHT.itemIndent, sub, m.strong);
-    if (!lines) return null;
-    items.push({ lines, fontSize: sub, lineHeight: INSIGHT.subLineHeight });
+  if (kind.kind === "service") {
+    const name = SERVICES.find((s) => s.key === kind.service)!.name;
+    const text = layoutText(ctx, name, supportingOf(slide), slide.items ?? []);
+    if (!text || !fits(BRAND.tile + gap + textHeight(text))) return null;
+    return { ...frame, ...common, kind: "service", service: kind.service, text };
   }
 
-  let cta: Block | null = null;
-  if (frame.isLast) {
-    const lines = wrapBalanced(smartQuotes(post.cta), box.width - INSIGHT.ctaIndent, INSIGHT.ctaSize, m.strong);
-    if (!lines) return null;
-    cta = { lines, fontSize: INSIGHT.ctaSize, lineHeight: INSIGHT.ctaLineHeight };
-  }
-
-  const gap = titleSize * INSIGHT.subGap;
-  const height =
-    INSIGHT.rule +
-    gap +
-    blockHeight(title) +
-    (subtitle ? gap + blockHeight(subtitle) : 0) +
-    (items.length ? gap + items.reduce((h, b) => h + blockHeight(b), 0) + (items.length - 1) * sub * INSIGHT.itemGap : 0) +
-    (cta ? INSIGHT.ctaGap + blockHeight(cta) : 0);
-  if (height > box.height) return null;
-
-  return { ...frame, title, subtitle, items, cta };
+  const text = layoutText(ctx, slide.title, supportingOf(slide), slide.items ?? []);
+  if (!text || !fits(TYPE.rule + gap + textHeight(text))) return null;
+  return { ...frame, ...common, kind: "statement", text };
 }
 
 /**
- * Every slide of an INSIGHT-01 post at one shared headline size: the largest size at which every
- * slide fits, so the set looks consistent when swiped.
+ * Every slide of a post at one shared headline size: the largest size at which every slide fits,
+ * so the set looks consistent when swiped. If even the smallest size doesn't fit, the slides that
+ * overflow are drawn anyway and flagged.
  */
-export function insightModel(post: Post, size: SlideSize, m: Measures): InsightSlide[] {
-  for (let t = INSIGHT.titleMax[size]; t >= INSIGHT.titleMin; t -= 2) {
-    const slides = post.slides.map((_, i) => layoutInsight(post, i, size, t, m));
-    if (slides.every((s) => s !== null)) return slides.map((s) => ({ ...s!, overflow: false }));
+function fitCarousel(
+  post: Post,
+  size: SlideSize,
+  m: Measures,
+  kindOf: (slide: Slide) => Kind,
+  bottom: (slide: Slide) => { height: number; grid: Common["grid"] },
+): SlideModel[] {
+  const at = (titleSize: number, i: number, lenient = false) =>
+    layoutSlide({ post, index: i, size, titleSize, m, lenient }, kindOf(post.slides[i]!), bottom(post.slides[i]!));
+  for (let t = TYPE.titleMax[size]; t >= TYPE.titleMin; t -= 2) {
+    const slides = post.slides.map((_, i) => at(t, i));
+    if (slides.every((s) => s !== null)) return slides.map((s) => ({ ...s!, overflow: false }) as SlideModel);
   }
-  // Nothing fits: draw at the smallest size, unwrapped where needed, and flag it.
-  return post.slides.map((slide, i) => {
-    const fit = layoutInsight(post, i, size, INSIGHT.titleMin, m);
-    if (fit) return { ...fit, overflow: false };
-    const frame = slideFrame(post, i, size);
-    const block = (text: string, fontSize: number, lineHeight: number) => ({ lines: [text], fontSize, lineHeight });
-    return {
-      ...frame,
-      title: block(slide.title, INSIGHT.titleMin, INSIGHT.titleLineHeight),
-      subtitle: slide.subtitle ? block(slide.subtitle, INSIGHT.subMin, INSIGHT.subLineHeight) : null,
-      items: (slide.items ?? []).map((it) => block(it, INSIGHT.subMin, INSIGHT.subLineHeight)),
-      cta: frame.isLast ? block(post.cta, INSIGHT.ctaSize, INSIGHT.ctaLineHeight) : null,
-      overflow: true,
-    };
+  return post.slides.map((_, i) => {
+    const fit = at(TYPE.titleMin, i);
+    return { ...(fit ?? at(TYPE.titleMin, i, true)!), overflow: !fit } as SlideModel;
   });
+}
+
+const noBottom = () => ({ height: 0, grid: null });
+
+// INSIGHT-01: typography only; the sentence is the design. -------------------------------------
+
+export function insightModel(post: Post, size: SlideSize, m: Measures): SlideModel[] {
+  return fitCarousel(post, size, m, () => ({ kind: "statement" }), noBottom);
+}
+
+// BIZ-01: a problem slide, then numbered signs or solutions with tick/cross marks. --------------
+
+/** Slides titled "1. …" are signs; the rest (the opening problem, the conclusion) are statements. */
+export function bizKind(slide: Slide): Kind {
+  const m = SIGN.exec(slide.title);
+  return m ? { kind: "sign", number: m[1]!, title: m[2]! } : { kind: "statement" };
+}
+
+export function bizModel(post: Post, size: SlideSize, m: Measures): SlideModel[] {
+  return fitCarousel(post, size, m, bizKind, noBottom);
+}
+
+// BRAND-01: services in a consistent grid, an icon plus a short line. ---------------------------
+
+export function brandKind(slide: Slide): Kind {
+  const service = serviceOf(slide.title);
+  return service ? { kind: "service", service } : { kind: "statement" };
+}
+
+export function brandModel(post: Post, size: SlideSize, m: Measures): SlideModel[] {
+  const listsServices = post.slides.some((s) => serviceOf(s.title));
+  return fitCarousel(post, size, m, brandKind, (slide) =>
+    listsServices ? { height: BRAND.gridGap + BRAND.gridHeight, grid: { active: serviceOf(slide.title) } } : noBottom(),
+  );
 }

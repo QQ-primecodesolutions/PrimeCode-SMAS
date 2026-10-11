@@ -60,3 +60,14 @@ export function wrapBalanced(text: string, width: number, fontSize: number, meas
   }
   return best;
 }
+
+/** Greedy wrap that never fails: a word wider than `width` gets a line of its own. Last resort only. */
+export function wrapLoose(text: string, width: number, fontSize: number, measure: Measure): string[] {
+  const lines: string[] = [];
+  for (const word of words(text)) {
+    const last = lines.at(-1);
+    if (last !== undefined && measure(`${last} ${word}`, fontSize) <= width) lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+  }
+  return lines;
+}

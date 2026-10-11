@@ -8,9 +8,9 @@ import type { ReactElement } from "react";
 import { FONTS } from "@/brand/tokens";
 import type { Post, TemplateCode } from "@/lib/post/schema";
 import { type SlideAssets, loadSlideAssets } from "./assets";
-import { INSIGHT, insightModel, type Measures } from "./model";
+import { bizModel, brandModel, insightModel, type Measures, type SlideModel, TYPE } from "./model";
 import { SLIDE_SIZES, type SlideSize } from "./sizes";
-import { InsightSlideView } from "./templates/insight-01";
+import { SlideCanvas } from "./templates/slide";
 
 export type SlideView = {
   element: ReactElement;
@@ -21,18 +21,22 @@ export type SlideView = {
 type Template = (post: Post, size: SlideSize, assets: SlideAssets) => SlideView[];
 
 const measures = (a: SlideAssets): Measures => ({
-  title: a.measure(`${FONTS.sans}/800`, INSIGHT.titleTracking),
+  title: a.measure(`${FONTS.sans}/800`, TYPE.titleTracking),
   body: a.measure(`${FONTS.sans}/400`),
   strong: a.measure(`${FONTS.sans}/600`),
 });
 
+const views = (models: SlideModel[], assets: SlideAssets): SlideView[] =>
+  models.map((model) => ({
+    element: <SlideCanvas model={model} logo={assets.logo} />,
+    warnings: model.overflow ? [`Slide ${model.index + 1}: text doesn't fit at the smallest size; shorten it.`] : [],
+  }));
+
 /** Built templates. The rest arrive milestone by milestone (see CLAUDE.md). */
 const TEMPLATES: Partial<Record<TemplateCode, Template>> = {
-  "INSIGHT-01": (post, size, assets) =>
-    insightModel(post, size, measures(assets)).map((model) => ({
-      element: <InsightSlideView model={model} logo={assets.logo} />,
-      warnings: model.overflow ? [`Slide ${model.index + 1}: text doesn't fit at the smallest size; shorten it.`] : [],
-    })),
+  "INSIGHT-01": (post, size, assets) => views(insightModel(post, size, measures(assets)), assets),
+  "BIZ-01": (post, size, assets) => views(bizModel(post, size, measures(assets)), assets),
+  "BRAND-01": (post, size, assets) => views(brandModel(post, size, measures(assets)), assets),
 };
 
 /** Changes whenever this module (or a template it imports) is reloaded, e.g. after an edit in dev. */
