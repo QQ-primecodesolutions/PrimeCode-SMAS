@@ -63,13 +63,19 @@ The 8 codes are on the workbook's Reference sheet and in Brand Brain §22. The s
 template are separate fields: PC-001 is a Journey post drawn with INSIGHT-01, and JOURNEY-01 stays
 photo-led.
 
-**Built so far:** INSIGHT-01, BIZ-01 and BRAND-01. A slide's kind comes from its title:
+**Built so far:** INSIGHT-01, BIZ-01, BRAND-01 and PROJECT-01. A slide's kind comes from its title:
 - **BIZ-01:** a title like `"1. Customers ask…"` makes a sign slide. It gets a tick badge, its
   number, and a checklist along the bottom. Set `"mark": "cross"` on a slide for a mistake.
   Unnumbered slides are statements.
 - **BRAND-01:** a title that names one of our four services (`"WEBSITES"`, `"Web apps"`) makes a
   service slide. It shows the service's icon and its canonical name. If a post lists any services,
   every slide shows the four-service grid along the bottom.
+- **PROJECT-01:**
+  - A short title (four words or fewer) over a subtitle becomes a mono section label ("THE
+    PROBLEM", "Behind the Build") with the subtitle as the headline.
+  - A slide with an `asset` shows that screenshot (`assets/shots/`, see its README) in a drawn
+    device on a stage panel: a phone for portrait shots, a laptop for landscape ones.
+  - A missing file shows a placeholder in the preview and blocks export.
 - **All templates:** the opening and closing slides use the INSIGHT-01 statement layout.
 
 Build one template end to end (model → layout → preview → export → tests) before starting the
@@ -116,6 +122,8 @@ next. Then render the posts that use it and show the PNGs.
   - `{ status: "pending" }` allows drafting only. The post can't be approved or exported until
     permission is recorded as `given` (email, WhatsApp, letter or signed form).
 - **Metrics:** use only figures the founder can verify.
+- **Unconfirmed facts:** when drafting, write anything not yet confirmed as `[CONFIRM: …]`, never as
+  a guess. A post that contains one can't be approved, and the export refuses it.
 - **Voice:** "Here's the problem. Here's why it happens. Here's how technology can help." Avoid
   the jargon list in the Brand Brain. Check drafts against posts 001–004 for tone.
 - **Status:** `IDEA → SELECTED → DRAFT → AI_REVIEW → HUMAN_REVIEW → REVISION → APPROVED →

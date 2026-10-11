@@ -5,7 +5,7 @@
  */
 import type { CSSProperties, ReactNode } from "react";
 import { COLORS, FONTS, GRADIENT_DARK, LOGO } from "@/brand/tokens";
-import { type Block, FRAME, type SlideFrame, TYPE, type Text } from "./model";
+import { type Block, type Device, FRAME, LABEL, type SlideFrame, TYPE, type Text } from "./model";
 import { nbsp, upper } from "./text";
 
 /** The site the logo links people to (PrimeCode/Web CNAME). */
@@ -119,6 +119,21 @@ export function TextBody({ text }: { text: Text }) {
   const gap = text.title.fontSize * TYPE.gap;
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      {text.label ? (
+        <div
+          style={{
+            ...label,
+            display: "flex",
+            height: LABEL.height,
+            alignItems: "center",
+            fontSize: LABEL.size,
+            color: COLORS.accent,
+            marginBottom: gap,
+          }}
+        >
+          {upper(text.label)}
+        </div>
+      ) : null}
       <Lines block={text.title} style={{ fontWeight: 800, letterSpacing: `${TYPE.titleTracking}em` }} />
       {text.subtitle ? <Lines block={text.subtitle} style={{ marginTop: gap, color: COLORS.lightMuted }} /> : null}
       {text.items.length ? (
@@ -194,5 +209,125 @@ export function Icon({ name, size, color, stroke = 2 }: { name: keyof typeof ICO
         <path key={d} d={d} />
       ))}
     </svg>
+  );
+}
+
+const BEZEL = "#0b1220";
+const OUTLINE = "0 0 0 2px #334155, 0 30px 60px rgba(0, 0, 0, 0.45)";
+
+/** The screen: the screenshot (top-aligned, cropped), or a labelled placeholder if it's missing. */
+function Screen({ device }: { device: Device }) {
+  const { screen, image } = device;
+  const name = device.asset.split("/").pop() ?? device.asset;
+  const nameSize = Math.min(20, Math.floor((screen.width * 0.86) / (name.length * 0.6)));
+  return (
+    <div
+      style={{
+        display: "flex",
+        position: "relative",
+        width: screen.width,
+        height: screen.height,
+        borderRadius: screen.radius,
+        overflow: "hidden",
+        background: COLORS.bg2,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
+    >
+      {image ? (
+        // eslint-disable-next-line @next/next/no-img-element -- Satori, not the DOM
+        <img
+          src={image.src}
+          alt=""
+          width={image.width}
+          height={image.height}
+          style={{ position: "absolute", top: 0, left: image.left }}
+        />
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", fontFamily: FONTS.mono }}>
+          <div style={{ display: "flex", fontWeight: 600, fontSize: 22, color: COLORS.accent }}>{upper("Screenshot")}</div>
+          <div style={{ display: "flex", fontWeight: 600, fontSize: 22, color: COLORS.accent, marginBottom: 12 }}>
+            {upper("needed")}
+          </div>
+          <div style={{ display: "flex", fontSize: nameSize, color: COLORS.lightMuted }}>{name}</div>
+        </div>
+      )}
+      {device.type === "phone" ? (
+        // The camera notch, painted over the screenshot (later siblings paint on top).
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            top: Math.round(device.bezel * 0.6),
+            left: Math.round(screen.width * 0.36),
+            width: Math.round(screen.width * 0.28),
+            height: Math.round(device.bezel * 1.1),
+            borderRadius: device.bezel,
+            background: BEZEL,
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/** A phone or laptop drawn with divs, holding a screenshot. Sizes come from `deviceGeometry`. */
+export function DeviceFrame({ device }: { device: Device }) {
+  if (device.type === "phone") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          width: device.width,
+          height: device.height,
+          padding: device.bezel,
+          borderRadius: device.screen.radius + device.bezel,
+          background: BEZEL,
+          boxShadow: OUTLINE,
+        }}
+      >
+        <Screen device={device} />
+      </div>
+    );
+  }
+  const lid = device.lid!;
+  const base = device.base!;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: device.width, height: device.height }}>
+      <div
+        style={{
+          display: "flex",
+          width: lid.width,
+          height: lid.height,
+          padding: device.bezel,
+          borderRadius: `${device.bezel * 1.4}px ${device.bezel * 1.4}px 4px 4px`,
+          background: BEZEL,
+          boxShadow: OUTLINE,
+        }}
+      >
+        <Screen device={device} />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          width: base.width,
+          height: base.height,
+          borderRadius: `2px 2px ${base.height}px ${base.height}px`,
+          backgroundImage: "linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            width: Math.round(base.width * 0.16),
+            height: Math.round(base.height * 0.4),
+            borderRadius: `0 0 ${base.height}px ${base.height}px`,
+            background: "#64748b",
+          }}
+        />
+      </div>
+    </div>
   );
 }

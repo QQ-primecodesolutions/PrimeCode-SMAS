@@ -5,6 +5,7 @@
  */
 import type { Post, Slide } from "@/lib/post/schema";
 import { SERVICES, type ServiceKey, serviceOf } from "@/lib/post/services";
+import type { Media } from "./images";
 import type { Measure } from "./metrics";
 import { SLIDE_SIZES, type SlideSize } from "./sizes";
 import { smartQuotes, wrapBalanced, wrapLoose } from "./text";
@@ -126,8 +127,46 @@ export const BRAND = {
   gridGap: 56,
 } as const;
 
+/** PROJECT-01: device mockups holding real screenshots (assets/shots/). */
+export const DEVICE = {
+  /** Height of the device on a slide, per output size. */
+  height: { feed: 420, square: 270, story: 700 } satisfies Record<SlideSize, number>,
+  /** The device sits centred on a full-width stage panel with this padding around it. */
+  stagePad: 32,
+  /** Phone screen proportions (width / height), a typical modern phone. */
+  phoneScreen: 9 / 19.5,
+  /** Laptop screen proportions (16:10). */
+  laptopScreen: 1.6,
+} as const;
+
+/** A section label above a headline ("THE PROBLEM"), set in mono. */
+export const LABEL = { size: 30, lineHeight: 1.2, height: 36 } as const;
+
 /** Headline, supporting text and list, already wrapped. */
-export type Text = { title: Block; subtitle: Block | null; items: Block[] };
+export type Text = {
+  /** Mono label above the headline, in place of the accent rule. */
+  label: string | null;
+  title: Block;
+  subtitle: Block | null;
+  items: Block[];
+};
+
+/** A device frame and where the screenshot sits in it, in px. */
+export type Device = {
+  type: "phone" | "laptop";
+  width: number;
+  height: number;
+  /** Bezel thickness. */
+  bezel: number;
+  screen: { width: number; height: number; radius: number };
+  /** Laptop only: the lid (screen + bezel) and the base below it. */
+  lid: { width: number; height: number } | null;
+  base: { width: number; height: number } | null;
+  /** The screenshot scaled to cover the screen, anchored top-centre; null when the file is missing. */
+  image: { src: string; width: number; height: number; left: number } | null;
+  /** The asset path, shown on the placeholder when the file is missing. */
+  asset: string;
+};
 
 type Common = {
   /** The post's call to action, on the final slide only. */
@@ -150,7 +189,8 @@ export type SignSlide = SlideFrame &
     text: Text;
   };
 export type ServiceSlide = SlideFrame & Common & { kind: "service"; service: ServiceKey; text: Text };
-export type SlideModel = StatementSlide | SignSlide | ServiceSlide;
+export type DeviceSlide = SlideFrame & Common & { kind: "device"; device: Device; text: Text };
+export type SlideModel = StatementSlide | SignSlide | ServiceSlide | DeviceSlide;
 
 /** Omit applied to each member of a union, keeping the members apart. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -180,7 +220,13 @@ function block(ctx: Ctx, text: string, width: number, fontSize: number, lineHeig
 }
 
 /** Headline, supporting text and list items; null if a word is too wide. */
-function layoutText(ctx: Ctx, title: string, supporting: string, items: readonly string[]): Text | null {
+function layoutText(
+  ctx: Ctx,
+  title: string,
+  supporting: string,
+  items: readonly string[],
+  label: string | null = null,
+): Text | null {
   const width = contentBox(ctx.size).width;
   const sub = subSize(ctx.titleSize);
   const t = block(ctx, title, width, ctx.titleSize, TYPE.titleLineHeight, ctx.m.title);
@@ -196,13 +242,15 @@ function layoutText(ctx: Ctx, title: string, supporting: string, items: readonly
     if (!b) return null;
     list.push(b);
   }
-  return { title: t, subtitle: s, items: list };
+  return { label, title: t, subtitle: s, items: list };
 }
 
-export function textHeight(text: Text): number {
+/** Height of a slide's text, including its label (or, with `rule`, the accent rule) above it. */
+export function textHeight(text: Text, rule = false): number {
   const gap = text.title.fontSize * TYPE.gap;
   const { items } = text;
   return (
+    (text.label ? LABEL.height + gap : rule ? TYPE.rule + gap : 0) +
     blockHeight(text.title) +
     (text.subtitle ? gap + blockHeight(text.subtitle) : 0) +
     (items.length
@@ -216,9 +264,62 @@ const supportingOf = (slide: Slide) => [slide.subtitle, slide.body].filter(Boole
 const SIGN = /^(\d{1,2})[.)]\s+(.+)$/s;
 
 type Kind =
-  | { kind: "statement" }
+  /** `label`/`title`/`supporting` override the slide's own title and subtitle (PROJECT-01 sections). */
+  | { kind: "statement"; label?: string; title?: string; supporting?: string }
   | { kind: "sign"; number: string; title: string }
-  | { kind: "service"; service: ServiceKey };
+  | { kind: "service"; service: ServiceKey }
+  | { kind: "device"; asset: string; media: Media | null; label?: string; title?: string; supporting?: string };
+
+/** Fits a phone or laptop into `maxHeight` x `maxWidth`, with `media` covering its screen. */
+export function deviceGeometry(
+  type: Device["type"],
+  maxHeight: number,
+  maxWidth: number,
+  asset: string,
+  media: Media | null,
+): Device {
+  let lid: Device["lid"] = null;
+  let base: Device["base"] = null;
+  let bezel: number;
+  let screen: { width: number; height: number };
+  let width: number;
+  let height = maxHeight;
+  if (type === "phone") {
+    bezel = Math.round(height * 0.03);
+    screen = { width: Math.round((height - 2 * bezel) * DEVICE.phoneScreen), height: height - 2 * bezel };
+    width = screen.width + 2 * bezel;
+  } else {
+    const layout = (h: number) => {
+      const baseH = Math.round(h * 0.055);
+      const lidH = h - baseH;
+      const b = Math.round(lidH * 0.045);
+      const sc = { height: lidH - 2 * b, width: Math.round((lidH - 2 * b) * DEVICE.laptopScreen) };
+      const lidW = sc.width + 2 * b;
+      return { b, sc, lidW, lidH, baseW: Math.round(lidW * 1.16), baseH };
+    };
+    let l = layout(height);
+    if (l.baseW > maxWidth) {
+      height = Math.floor((height * maxWidth) / l.baseW);
+      l = layout(height);
+      // Rounding can leave it a pixel over.
+      while (l.baseW > maxWidth) l = layout(--height);
+    }
+    bezel = l.b;
+    screen = l.sc;
+    width = l.baseW;
+    lid = { width: l.lidW, height: l.lidH };
+    base = { width: l.baseW, height: l.baseH };
+  }
+  let image: Device["image"] = null;
+  if (media) {
+    // Cover the screen: fill its width (cropping the bottom), or its height if the shot is wider.
+    const scale = Math.max(screen.width / media.width, screen.height / media.height);
+    const w = Math.round(media.width * scale);
+    image = { src: media.src, width: w, height: Math.round(media.height * scale), left: Math.round((screen.width - w) / 2) };
+  }
+  const radius = type === "phone" ? Math.round(width * 0.17) - bezel : Math.round(bezel * 0.4);
+  return { type, width, height, bezel, screen: { ...screen, radius }, lid, base, image, asset };
+}
 
 /**
  * Lays out one slide at a headline size. `kindOf` decides what the slide is; `bottom` is the height
@@ -267,8 +368,34 @@ function layoutSlide(
     return { ...frame, ...common, kind: "service", service: kind.service, text };
   }
 
-  const text = layoutText(ctx, slide.title, supportingOf(slide), slide.items ?? []);
-  if (!text || !fits(TYPE.rule + gap + textHeight(text))) return null;
+  if (kind.kind === "device") {
+    const portrait = kind.media ? kind.media.width / kind.media.height < 0.9 : /phone|mobile/i.test(kind.asset);
+    const device = deviceGeometry(
+      portrait ? "phone" : "laptop",
+      DEVICE.height[size],
+      box.width - 2 * DEVICE.stagePad,
+      kind.asset,
+      kind.media,
+    );
+    const text = layoutText(
+      ctx,
+      kind.title ?? slide.title,
+      kind.supporting ?? supportingOf(slide),
+      slide.items ?? [],
+      kind.label,
+    );
+    if (!text || !fits(DEVICE.height[size] + 2 * DEVICE.stagePad + gap + textHeight(text))) return null;
+    return { ...frame, ...common, kind: "device", device, text };
+  }
+
+  const text = layoutText(
+    ctx,
+    kind.title ?? slide.title,
+    kind.supporting ?? supportingOf(slide),
+    slide.items ?? [],
+    kind.label,
+  );
+  if (!text || !fits(textHeight(text, true))) return null;
   return { ...frame, ...common, kind: "statement", text };
 }
 
@@ -328,4 +455,29 @@ export function brandModel(post: Post, size: SlideSize, m: Measures): SlideModel
   return fitCarousel(post, size, m, brandKind, (slide) =>
     listsServices ? { height: BRAND.gridGap + BRAND.gridHeight, grid: { active: serviceOf(slide.title) } } : noBottom(),
   );
+}
+
+// PROJECT-01: problem -> what we built -> why it mattered, with real screenshots in device frames.
+
+/**
+ * PROJECT-01 slides: a short title (four words or fewer) over a subtitle is a section label
+ * ("THE PROBLEM", "Behind the Build") above the subtitle as headline; a slide with an `asset`
+ * shows that screenshot in a phone (portrait shots) or a laptop (landscape).
+ */
+export function projectKind(slide: Slide, media: ReadonlyMap<string, Media | null>): Kind {
+  const section =
+    slide.subtitle && slide.title.trim().split(/\s+/).length <= 4
+      ? { label: slide.title, title: slide.subtitle, supporting: slide.body ?? "" }
+      : {};
+  if (slide.asset) return { kind: "device", asset: slide.asset, media: media.get(slide.asset) ?? null, ...section };
+  return { kind: "statement", ...section };
+}
+
+export function projectModel(
+  post: Post,
+  size: SlideSize,
+  m: Measures,
+  media: ReadonlyMap<string, Media | null>,
+): SlideModel[] {
+  return fitCarousel(post, size, m, (slide) => projectKind(slide, media), noBottom);
 }

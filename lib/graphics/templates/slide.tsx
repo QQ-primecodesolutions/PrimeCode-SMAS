@@ -7,6 +7,7 @@ import { Cta, DarkFrame } from "../parts";
 import { Checklist, SignBody } from "./biz-01";
 import { ServiceBody, ServiceGrid } from "./brand-01";
 import { StatementBody } from "./insight-01";
+import { DeviceBody } from "./project-01";
 
 export function SlideCanvas({ model, logo }: { model: SlideModel; logo: string }) {
   return (
@@ -16,6 +17,8 @@ export function SlideCanvas({ model, logo }: { model: SlideModel; logo: string }
           <SignBody model={model} />
         ) : model.kind === "service" ? (
           <ServiceBody model={model} />
+        ) : model.kind === "device" ? (
+          <DeviceBody model={model} />
         ) : (
           <StatementBody model={model} />
         )}

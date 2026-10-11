@@ -3,8 +3,9 @@
  * lib/graphics/assets.ts does). A failed load clears the cache so the next call retries.
  */
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve, sep } from "node:path";
 import { FONTS, LOGO } from "@/brand/tokens";
+import { imageSize, type Media } from "./images";
 import { fontMetrics, measurer, type Measure } from "./metrics";
 
 type Weight = 400 | 600 | 700 | 800;
@@ -59,4 +60,28 @@ export function loadSlideAssets(): Promise<SlideAssets> {
     throw e;
   });
   return assets;
+}
+
+const ASSETS = resolve(process.cwd(), "assets");
+const MAX_BYTES = 8_000_000;
+
+/**
+ * A slide's `asset` (a path under assets/, e.g. "shots/bz-home.png") as a data URI with its size.
+ * Null when the file is missing; throws on anything that isn't a PNG or JPEG under assets/. Not
+ * cached, so a newly added screenshot shows up on the next render.
+ */
+export async function loadMedia(asset: string): Promise<Media | null> {
+  const path = resolve(ASSETS, asset);
+  if (!path.startsWith(ASSETS + sep)) throw new Error(`Asset ${asset} is outside assets/`);
+  let data: Buffer;
+  try {
+    data = await readFile(path);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw e;
+  }
+  if (data.length > MAX_BYTES) throw new Error(`Asset ${asset} is over ${MAX_BYTES / 1e6} MB; resize it`);
+  const size = imageSize(data);
+  if (!size) throw new Error(`Asset ${asset} isn't a PNG or JPEG`);
+  return { src: `data:image/${size.type};base64,${data.toString("base64")}`, width: size.width, height: size.height };
 }
