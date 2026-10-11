@@ -166,6 +166,11 @@ export const postSchema = z
     const perm = post.clientPermission;
     if (!perm && post.visualTemplate === "PROJECT-01")
       issue(["clientPermission"], "PROJECT-01 shows a client's work: record clientPermission (pending or given)");
+    if (post.visualTemplate === "LOCAL-01" && (named.length > 0 || perm))
+      issue(
+        ["visualTemplate"],
+        "LOCAL-01 is an illustrative concept and can't name or feature a real client; use PROJECT-01 with written permission",
+      );
     if (!perm && named.length > 0)
       issue(["clientPermission"], `Names ${named.join(", ")}: record clientPermission (pending or given)`);
     if (post.visualTemplate === "BRAND-01") {
