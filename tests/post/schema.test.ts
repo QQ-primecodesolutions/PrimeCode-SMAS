@@ -65,4 +65,13 @@ describe("postSchema", () => {
     const spoken = { ...given, method: "phone" as never };
     expect(errors(basePost({ topic: "Thiboloha", clientPermission: spoken }))).not.toEqual([]);
   });
+
+  it("keeps BRAND-01 to the four services we sell", () => {
+    const slides = [{ title: "Websites" }, { title: "Mobile apps", subtitle: "Coming soon." }];
+    expect(errors(basePost({ visualTemplate: "BRAND-01", slides }))).toEqual([
+      expect.stringMatching(/^slides: BRAND-01 lists only the four services we sell; remove Mobile apps/),
+    ]);
+    // Other templates may mention future services for education.
+    expect(errors(basePost({ visualTemplate: "TECH-01", slides }))).toEqual([]);
+  });
 });

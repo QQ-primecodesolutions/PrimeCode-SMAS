@@ -4,6 +4,7 @@
  */
 import { z } from "zod";
 import { clientsNamedIn } from "./clients";
+import { futureServicesIn } from "./services";
 import { STATUSES, isApprovedOrLater, isEarly } from "./status";
 
 export const TEMPLATES = [
@@ -59,6 +60,8 @@ export const slideSchema = z.strictObject({
   /** File under assets/ (e.g. "shots/thiboloha-home.png"), for photo and project templates. */
   asset: text.optional(),
   assetAlt: text.optional(),
+  /** BIZ-01 numbered slides: a tick (a sign, a good practice) or a cross (a mistake). Default tick. */
+  mark: z.enum(["tick", "cross"]).optional(),
 });
 export type Slide = z.infer<typeof slideSchema>;
 
@@ -122,6 +125,11 @@ export const postSchema = z
       issue(["clientPermission"], "PROJECT-01 shows a client's work: record clientPermission (pending or given)");
     if (!perm && named.length > 0)
       issue(["clientPermission"], `Names ${named.join(", ")}: record clientPermission (pending or given)`);
+    if (post.visualTemplate === "BRAND-01") {
+      const future = futureServicesIn(postTexts(post));
+      if (future.length)
+        issue(["slides"], `BRAND-01 lists only the four services we sell; remove ${future.join(", ")}`);
+    }
     if (perm?.status === "pending" && isApprovedOrLater(post.status))
       issue(["status"], `Can't be ${post.status} until written permission from ${perm.client} is recorded`);
   });
