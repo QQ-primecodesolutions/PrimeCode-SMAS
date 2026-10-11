@@ -10,7 +10,7 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "A community fitness business in Tseki needed more than a Facebook page.",
-  "caption": "",
+  "caption": "A community fitness business [CONFIRM: in Tseki?] needed more than a Facebook page.\n\nBZ Fitness and Wellness has programmes and pricing to share.\n\nWhat we built: a business website that sets out their programmes, pricing and services clearly, on a phone, with a WhatsApp button so an enquiry is one tap away.\n\n[CONFIRM: why it mattered. What changed for them, in their words or in numbers they can stand behind.]\n\nRunning something similar? Let's talk about what you'd need.",
   "cta": "Running something similar? Let's talk about what you'd need.",
   "visualTemplate": "PROJECT-01",
   "visualBrief": "Phone mockups showing programmes, pricing and WhatsApp enquiry flow. Confirm client permission first.",
@@ -20,11 +20,37 @@
     "#FreeState",
     "#SmallBusiness"
   ],
-  "status": "IDEA",
-  "notes": "Verify before approving: the business is in Tseki.",
+  "status": "DRAFT",
+  "notes": "Drafted from Brand Brain §15 (pricing, programme information, WhatsApp integration) and the workbook hook. Before approval: record written permission, replace every [CONFIRM: ...], confirm the business is in Tseki, and add the three screenshots in assets/shots/ (desktop home page; programmes on a phone; the WhatsApp enquiry on a phone). On Facebook, tag BZ Fitness and Wellness's page if it has one.",
   "slides": [
     {
-      "title": "A community fitness business in Tseki needed more than a Facebook page."
+      "title": "Behind the Build",
+      "subtitle": "BZ Fitness and Wellness",
+      "asset": "shots/bz-fitness-home-desktop.png",
+      "assetAlt": "The BZ Fitness and Wellness website on a laptop"
+    },
+    {
+      "title": "THE PROBLEM",
+      "subtitle": "A community fitness business that needed more than a Facebook page."
+    },
+    {
+      "title": "WHAT WE BUILT",
+      "subtitle": "A business website with their programmes, pricing and services in one place.",
+      "asset": "shots/bz-fitness-programmes-phone.png",
+      "assetAlt": "The programmes page on a phone"
+    },
+    {
+      "title": "ONE TAP TO ASK",
+      "subtitle": "A WhatsApp button, so an enquiry goes straight to them.",
+      "asset": "shots/bz-fitness-whatsapp-phone.png",
+      "assetAlt": "The WhatsApp enquiry button on a phone"
+    },
+    {
+      "title": "WHY IT MATTERED",
+      "subtitle": "[CONFIRM: what changed for BZ Fitness?]"
+    },
+    {
+      "title": "Built by PrimeCode Solutions."
     }
   ],
   "clientPermission": {
