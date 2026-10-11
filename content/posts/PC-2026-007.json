@@ -10,7 +10,7 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "Your booking system talks to your payment system. An API is how.",
-  "caption": "",
+  "caption": "Your booking system talks to your payment system. An API is how.\n\nAPI stands for Application Programming Interface, which explains nothing. So here is the plain version.\n\nAn API is an agreed way for two systems to talk. One system sends a request in a format both sides understand. The other sends back an answer in the same format.\n\nThink of a restaurant. You don't walk into the kitchen to cook your own food. You tell the waiter what you want, the waiter takes the order to the kitchen and brings your meal back. The waiter is the API.\n\nYou already use APIs every day: paying by card on a website, logging in with Google, seeing a map on a contact page.\n\nSave this for the next time a developer says 'API'.",
   "cta": "Save this for the next time a developer says 'API'.",
   "visualTemplate": "TECH-01",
   "visualBrief": "Simple diagram: two boxes (your website / the payment provider) with an arrow labelled API. Use a restaurant-order analogy on slide 3.",
@@ -19,10 +19,67 @@
     "#SoftwareDevelopment",
     "#Technology"
   ],
-  "status": "IDEA",
+  "status": "DRAFT",
   "slides": [
     {
-      "title": "Your booking system talks to your payment system. An API is how."
+      "title": "What is an API?",
+      "subtitle": "Explained without the jargon."
+    },
+    {
+      "title": "Your website needs to take a payment.",
+      "subtitle": "It doesn't handle the card itself. It asks the payment provider, and gets an answer back.",
+      "diagram": {
+        "type": "flow",
+        "steps": [
+          {
+            "label": "Your website",
+            "note": "Asks: can this card pay?",
+            "via": "API"
+          },
+          {
+            "label": "Payment provider",
+            "note": "Answers: yes, paid"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Think of a restaurant.",
+      "subtitle": "You never walk into the kitchen. The waiter takes your order in and brings your meal out.",
+      "diagram": {
+        "type": "flow",
+        "steps": [
+          {
+            "label": "You",
+            "note": "the customer"
+          },
+          {
+            "label": "The waiter",
+            "note": "the API"
+          },
+          {
+            "label": "The kitchen",
+            "note": "the other system"
+          }
+        ]
+      }
+    },
+    {
+      "title": "An API is an agreed way for two systems to talk.",
+      "subtitle": "One asks in a set format. The other answers in a set format."
+    },
+    {
+      "title": "You already use them.",
+      "items": [
+        "Paying by card on a website",
+        "Logging in with Google",
+        "A map on a contact page"
+      ]
+    },
+    {
+      "title": "Next time a developer says “API”…",
+      "subtitle": "They mean: these two systems have agreed how to talk."
     }
-  ]
+  ],
+  "notes": "Drafted as general education; no client or PrimeCode claims. API development is a future service: keep this post educational, never an offer."
 }

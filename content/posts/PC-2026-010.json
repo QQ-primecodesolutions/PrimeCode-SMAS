@@ -10,7 +10,7 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "You click Submit. Six things happen before you see 'Thank you'.",
-  "caption": "",
+  "caption": "You click Submit. Six things happen before you see 'Thank you'.\n\n1. Your browser checks the form: required fields, a proper email address.\n2. The form travels to the server over HTTPS, so nobody in between can read it.\n3. The server checks everything again, because anyone can skip the browser's checks.\n4. The details are saved in a database, so nothing gets lost.\n5. The server sends back a reply.\n6. Your browser shows 'Thank you'.\n\nMost of the work in a good form is the part you never see.\n\nWant to see more of how this works? Let us know.",
   "cta": "Want to see more of how this works? Let us know.",
   "visualTemplate": "CODE-01",
   "visualBrief": "Flow diagram: browser to server to validation to database to response. Real editor screenshot on one slide.",
@@ -19,10 +19,89 @@
     "#SoftwareDevelopment",
     "#PrimeCodeSolutions"
   ],
-  "status": "IDEA",
+  "status": "DRAFT",
   "slides": [
     {
-      "title": "You click Submit. Six things happen before you see 'Thank you'."
+      "title": "You click Submit.",
+      "subtitle": "Six things happen before you see “Thank you”."
+    },
+    {
+      "title": "1. Your browser checks the form.",
+      "subtitle": "Obvious mistakes are caught before anything is sent.",
+      "code": {
+        "language": "html",
+        "filename": "enquiry.html",
+        "source": "<form method=\"post\" action=\"/enquiry\">\n  <input name=\"email\" type=\"email\" required>\n  <button>Submit</button>\n</form>",
+        "highlight": [
+          2
+        ]
+      }
+    },
+    {
+      "title": "2. It travels to the server.",
+      "subtitle": "Over HTTPS, so nobody in between can read it.",
+      "diagram": {
+        "type": "flow",
+        "steps": [
+          {
+            "label": "Your browser",
+            "via": "HTTPS"
+          },
+          {
+            "label": "The server"
+          }
+        ]
+      }
+    },
+    {
+      "title": "3. The server checks it again.",
+      "subtitle": "Anyone can skip the browser’s checks. The server never trusts them.",
+      "code": {
+        "language": "ts",
+        "filename": "enquiry.ts",
+        "source": "const email = form.get(\"email\");\nif (!isEmail(email)) {\n  return error(\"Check your email\");\n}",
+        "highlight": [
+          2
+        ]
+      }
+    },
+    {
+      "title": "4. The details are saved.",
+      "subtitle": "In a database, so nothing gets lost.",
+      "code": {
+        "language": "sql",
+        "filename": "save.sql",
+        "source": "INSERT INTO enquiries (email, message)\nVALUES ($1, $2);"
+      }
+    },
+    {
+      "title": "5 & 6. A reply comes back.",
+      "diagram": {
+        "type": "flow",
+        "direction": "column",
+        "steps": [
+          {
+            "label": "Browser checks"
+          },
+          {
+            "label": "Sent over HTTPS"
+          },
+          {
+            "label": "Server checks again"
+          },
+          {
+            "label": "Saved to the database"
+          },
+          {
+            "label": "“Thank you”"
+          }
+        ]
+      }
+    },
+    {
+      "title": "A form that “just works” takes real work.",
+      "subtitle": "Most of it is the part you never see."
     }
-  ]
+  ],
+  "notes": "Drafted as general education. The code is illustrative (isEmail and error stand in for real helpers); it is set as text, not an editor screenshot."
 }
