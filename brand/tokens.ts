@@ -54,7 +54,7 @@ export const FONTS = {
  * mark, cropped from the top of the image, on a white tile.
  */
 export const LOGO = {
-  path: "assets/brand/logo.png",
+  /** The file is assets/brand/logo.png (read in lib/graphics/assets.ts). */
   width: 1024,
   height: 928,
   /** Square crop around the mark (same as the website's favicon, lib/iconGraphic.tsx). */

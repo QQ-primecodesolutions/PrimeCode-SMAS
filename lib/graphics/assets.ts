@@ -4,7 +4,7 @@
  */
 import { readFile } from "node:fs/promises";
 import { join, resolve, sep } from "node:path";
-import { FONTS, LOGO } from "@/brand/tokens";
+import { FONTS } from "@/brand/tokens";
 import { imageSize, type Media } from "./images";
 import { fontMetrics, measurer, type Measure } from "./metrics";
 
@@ -32,20 +32,20 @@ export type SlideAssets = {
 
 let assets: Promise<SlideAssets> | null = null;
 
-const read = (path: string) => readFile(join(process.cwd(), path));
+// Paths are spelled out under assets/ so the build traces only those folders, not the whole project.
 
 export function loadSlideAssets(): Promise<SlideAssets> {
   assets ??= (async (): Promise<SlideAssets> => {
     const fonts = await Promise.all(
       FILES.map(async ([name, file, weight]) => ({
         name,
-        data: await read(`assets/fonts/${file}.ttf`),
+        data: await readFile(join(process.cwd(), "assets", "fonts", `${file}.ttf`)),
         weight,
         style: "normal" as const,
       })),
     );
     const metrics = new Map(fonts.map((f) => [`${f.name}/${f.weight}`, fontMetrics(f.data)]));
-    const logo = `data:image/png;base64,${(await read(LOGO.path)).toString("base64")}`;
+    const logo = `data:image/png;base64,${(await readFile(join(process.cwd(), "assets", "brand", "logo.png"))).toString("base64")}`;
     return {
       fonts,
       logo,
