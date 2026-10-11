@@ -52,7 +52,43 @@ export const isoDate = z
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD")
   .refine((s) => new Date(`${s}T00:00:00Z`).toISOString().startsWith(s), "Not a real date");
 
-export const slideSchema = z.strictObject({
+/** Boxes joined by arrows (TECH-01, CODE-01). `via` labels the arrow out of a step. */
+export const flowSchema = z.strictObject({
+  type: z.literal("flow"),
+  /** Default: a row for up to three steps, a column for more. */
+  direction: z.enum(["row", "column"]).optional(),
+  steps: z
+    .array(z.strictObject({ label: text, note: text.optional(), via: text.optional() }))
+    .min(2)
+    .max(6),
+});
+
+/** Side-by-side comparison: two or three columns, each a heading and a short list. */
+export const columnsSchema = z.strictObject({
+  type: z.literal("columns"),
+  columns: z
+    .array(z.strictObject({ heading: text, items: z.array(text).min(1).max(5) }))
+    .min(2)
+    .max(3),
+});
+
+export const diagramSchema = z.discriminatedUnion("type", [flowSchema, columnsSchema]);
+export type Diagram = z.infer<typeof diagramSchema>;
+
+export const CODE_LANGUAGES = ["html", "css", "js", "ts", "sql", "json", "text"] as const;
+
+/** Code shown as text in an editor panel (CODE-01), never as a screenshot. */
+export const codeSchema = z.strictObject({
+  language: z.enum(CODE_LANGUAGES),
+  /** Shown on the panel's tab, e.g. "enquiry.html". */
+  filename: text.optional(),
+  source: z.string().min(1).max(600),
+  /** 1-based line numbers to highlight. */
+  highlight: z.array(z.int().min(1)).optional(),
+});
+export type Code = z.infer<typeof codeSchema>;
+
+const slideFields = z.strictObject({
   title: text,
   subtitle: text.optional(),
   body: text.optional(),
@@ -62,7 +98,14 @@ export const slideSchema = z.strictObject({
   assetAlt: text.optional(),
   /** BIZ-01 numbered slides: a tick (a sign, a good practice) or a cross (a mistake). Default tick. */
   mark: z.enum(["tick", "cross"]).optional(),
+  diagram: diagramSchema.optional(),
+  code: codeSchema.optional(),
 });
+
+export const slideSchema = slideFields.refine(
+  (s) => [s.asset, s.diagram, s.code].filter(Boolean).length <= 1,
+  "A slide shows one visual: an asset, a diagram or code",
+);
 export type Slide = z.infer<typeof slideSchema>;
 
 /**
@@ -154,6 +197,21 @@ export function postTexts(post: Pick<Post, "topic" | "hook" | "caption" | "capti
     post.caption,
     post.captionFB ?? "",
     post.cta,
-    ...post.slides.flatMap((s) => [s.title, s.subtitle ?? "", s.body ?? "", ...(s.items ?? []), s.assetAlt ?? ""]),
+    ...post.slides.flatMap((s) => [
+      s.title,
+      s.subtitle ?? "",
+      s.body ?? "",
+      ...(s.items ?? []),
+      s.assetAlt ?? "",
+      ...diagramTexts(s.diagram),
+      s.code?.filename ?? "",
+      s.code?.source ?? "",
+    ]),
   ];
+}
+
+function diagramTexts(d: Diagram | undefined): string[] {
+  if (!d) return [];
+  if (d.type === "flow") return d.steps.flatMap((st) => [st.label, st.note ?? "", st.via ?? ""]);
+  return d.columns.flatMap((c) => [c.heading, ...c.items]);
 }
