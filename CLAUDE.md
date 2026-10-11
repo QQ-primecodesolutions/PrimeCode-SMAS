@@ -54,7 +54,7 @@ larger plan, kept for reference (template analysis §6, output specs, scope §13
   - `fonts/`: TTF only, with their OFL licences
   - `brand/logo.png`
   - `shots/`: client site screenshots
-  - `photos/`: photos for JOURNEY-01 and LOCAL-01
+  - `photos/`: photos for JOURNEY-01 and LOCAL-01 (see its README)
 - The workbook `primecode-content-calendar.xlsx` is the archive and holds the Analytics sheet.
   Never edit it.
 
@@ -63,8 +63,7 @@ The 8 codes are on the workbook's Reference sheet and in Brand Brain §22. The s
 template are separate fields: PC-001 is a Journey post drawn with INSIGHT-01, and JOURNEY-01 stays
 photo-led.
 
-**Built so far:** INSIGHT-01, BIZ-01, BRAND-01, PROJECT-01, TECH-01 and CODE-01. A slide's kind
-comes from its title or its visual:
+**All 8 templates are built.** A slide's kind comes from its title or its visual:
 - **BIZ-01:** a title like `"1. Customers ask…"` makes a sign slide. It gets a tick badge, its
   number, and a checklist along the bottom. Set `"mark": "cross"` on a slide for a mistake.
   Unnumbered slides are statements.
@@ -88,6 +87,17 @@ comes from its title or its visual:
   - TECH-01 puts the logo bottom-right, as the Reference sheet says.
   - Each slide has at most one visual: `asset`, `diagram` or `code`.
   - If copy overflows, the export warns. Fix it by cutting copy, not by shrinking the type.
+- **JOURNEY-01:**
+  - A slide with an `asset` (`assets/photos/`, see its README) shows the photo full-bleed, with a
+    gradient and the text low on the slide. The headline is capped smaller so the photo shows.
+  - Use real photos only, never stock. The founder writes the captions for these posts.
+- **LOCAL-01:**
+  - The same photo layout, plus before/after frames (a `columns` diagram), numbered ideas (the
+    BIZ-01 sign layout) and statements.
+  - Every slide carries a fixed "Illustrative concept" badge. The schema refuses a LOCAL-01 post
+    that names a client or has `clientPermission`.
+- **Missing assets:** a missing photo or screenshot shows a placeholder in the preview and blocks
+  export.
 - **All templates:** the opening and closing slides use the INSIGHT-01 statement layout.
 
 Build one template end to end (model → layout → preview → export → tests) before starting the

@@ -13,6 +13,8 @@ import {
   bizModel,
   brandModel,
   insightModel,
+  journeyModel,
+  localModel,
   type Measures,
   projectModel,
   type SlideModel,
@@ -40,7 +42,12 @@ const measures = (a: SlideAssets): Measures => ({
 
 const views = (models: SlideModel[], assets: SlideAssets): SlideView[] =>
   models.map((model) => {
-    const missing = model.kind === "device" && !model.device.image ? [model.device.asset] : [];
+    const missing =
+      model.kind === "device" && !model.device.image
+        ? [model.device.asset]
+        : model.kind === "photo" && !model.photo
+          ? [model.asset]
+          : [];
     return {
       element: <SlideCanvas model={model} logo={assets.logo} />,
       warnings: [
@@ -64,6 +71,10 @@ const TEMPLATES: Partial<Record<TemplateCode, Template>> = {
   "BRAND-01": async (post, size, assets) => views(brandModel(post, size, measures(assets)), assets),
   "TECH-01": async (post, size, assets) => views(techModel(post, size, measures(assets)), assets),
   "CODE-01": async (post, size, assets) => views(techModel(post, size, measures(assets)), assets),
+  "JOURNEY-01": async (post, size, assets) =>
+    views(journeyModel(post, size, measures(assets), await loadSlideMedia(post)), assets),
+  "LOCAL-01": async (post, size, assets) =>
+    views(localModel(post, size, measures(assets), await loadSlideMedia(post)), assets),
   "PROJECT-01": async (post, size, assets) =>
     views(projectModel(post, size, measures(assets), await loadSlideMedia(post)), assets),
 };

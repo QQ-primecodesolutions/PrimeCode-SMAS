@@ -6,6 +6,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { CODE_COLORS, COLORS, FONTS, GRADIENT_DARK, LOGO } from "@/brand/tokens";
 import {
+  BADGE,
   type Block,
   CODE,
   type CodeModel,
@@ -65,11 +66,23 @@ const label: CSSProperties = {
  * Dark slide: brand gradient background, logo tile and series label on top, website and counter at
  * the bottom. `children` fill the content area (see `contentBox`).
  */
-export function DarkFrame({ frame, logo, children }: { frame: SlideFrame; logo: string; children: ReactNode }) {
+export function DarkFrame({
+  frame,
+  logo,
+  backdrop,
+  children,
+}: {
+  frame: SlideFrame;
+  logo: string;
+  /** A full-bleed layer (e.g. a photo) drawn first, under everything else. */
+  backdrop?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <div
       style={{
         display: "flex",
+        position: "relative",
         flexDirection: "column",
         width: frame.width,
         height: frame.height,
@@ -80,10 +93,26 @@ export function DarkFrame({ frame, logo, children }: { frame: SlideFrame; logo: 
         color: COLORS.white,
       }}
     >
+      {/* No z-index in Satori: the backdrop comes first so the frame paints over it. */}
+      {backdrop ? (
+        <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: frame.width, height: frame.height }}>
+          {backdrop}
+        </div>
+      ) : null}
       {frame.logo === "top" ? (
         <div style={{ display: "flex", height: FRAME.top, alignItems: "center", justifyContent: "space-between" }}>
           <LogoTile logo={logo} size={FRAME.top} />
-          <div style={{ ...label, display: "flex", color: COLORS.accent }}>{upper(frame.series)}</div>
+          <div
+            style={{
+              ...label,
+              display: "flex",
+              color: COLORS.accent,
+              // On a photo, sit the label on a dark pill so it reads over bright areas.
+              ...(backdrop ? { padding: "8px 18px", borderRadius: 30, background: "rgba(15, 23, 42, 0.72)" } : {}),
+            }}
+          >
+            {upper(frame.series)}
+          </div>
         </div>
       ) : (
         // Logo bottom-right: the series and counter move up into a slim top bar.
@@ -537,6 +566,32 @@ export function CodePanel({ code }: { code: CodeModel }) {
             ))}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/** A pill at the top of the content area, e.g. LOCAL-01's "Illustrative concept". */
+export function Badge({ text }: { text: string }) {
+  return (
+    <div style={{ display: "flex", height: BADGE.height, marginBottom: BADGE.gap }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          height: BADGE.height,
+          padding: "0 20px",
+          borderRadius: BADGE.height / 2,
+          border: `2px solid ${COLORS.accent}`,
+          background: "rgba(15, 23, 42, 0.72)",
+          fontFamily: FONTS.mono,
+          fontWeight: 600,
+          fontSize: BADGE.size,
+          letterSpacing: "0.1em",
+          color: COLORS.accent,
+        }}
+      >
+        {upper(text)}
       </div>
     </div>
   );

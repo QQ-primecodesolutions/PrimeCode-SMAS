@@ -146,6 +146,17 @@ export const DEVICE = {
   laptopScreen: 1.6,
 } as const;
 
+/** Photo-led slides (JOURNEY-01, LOCAL-01): a full-bleed photo with the text low on the slide. */
+export const PHOTO = {
+  /** The text may take at most this share of the content area, so the photo shows. */
+  textShare: 0.5,
+  /** Headline cap on photo slides (the photo is the hero), per output size. */
+  titleMax: { feed: 80, square: 68, story: 88 } satisfies Record<SlideSize, number>,
+} as const;
+
+/** A badge at the top of the content area ("ILLUSTRATIVE CONCEPT" on LOCAL-01). */
+export const BADGE = { height: 46, gap: 28, size: 22 } as const;
+
 /** A section label above a headline ("THE PROBLEM"), set in mono. */
 export const LABEL = { size: 30, lineHeight: 1.2, height: 36 } as const;
 
@@ -246,6 +257,8 @@ export type Device = {
 };
 
 type Common = {
+  /** Fixed badge above the content (LOCAL-01: "Illustrative concept"). */
+  badge: string | null;
   /** The post's call to action, on the final slide only. */
   cta: Block | null;
   /** BRAND-01 posts that list services: the grid along the bottom, with this slide's service lit. */
@@ -269,7 +282,10 @@ export type ServiceSlide = SlideFrame & Common & { kind: "service"; service: Ser
 export type DeviceSlide = SlideFrame & Common & { kind: "device"; device: Device; text: Text };
 export type DiagramSlide = SlideFrame & Common & { kind: "diagram"; diagram: DiagramModel; text: Text };
 export type CodeSlide = SlideFrame & Common & { kind: "code"; code: CodeModel; text: Text };
-export type SlideModel = StatementSlide | SignSlide | ServiceSlide | DeviceSlide | DiagramSlide | CodeSlide;
+/** A full-bleed photo covering the slide (centre-cropped); null when the file is missing. */
+export type Photo = { src: string; width: number; height: number; left: number; top: number };
+export type PhotoSlide = SlideFrame & Common & { kind: "photo"; photo: Photo | null; asset: string; text: Text };
+export type SlideModel = StatementSlide | SignSlide | ServiceSlide | DeviceSlide | DiagramSlide | CodeSlide | PhotoSlide;
 
 /** Omit applied to each member of a union, keeping the members apart. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -349,7 +365,16 @@ type Kind =
   | { kind: "service"; service: ServiceKey }
   | { kind: "device"; asset: string; media: Media | null; label?: string; title?: string; supporting?: string }
   | { kind: "diagram"; diagram: Diagram }
-  | { kind: "code"; code: Code };
+  | { kind: "code"; code: Code }
+  | { kind: "photo"; asset: string; media: Media | null };
+
+/** Scales `media` to cover a `width` x `height` slide, centred. */
+export function coverPhoto(media: Media, width: number, height: number): Photo {
+  const scale = Math.max(width / media.width, height / media.height);
+  const w = Math.round(media.width * scale);
+  const h = Math.round(media.height * scale);
+  return { src: media.src, width: w, height: h, left: Math.round((width - w) / 2), top: Math.round((height - h) / 2) };
+}
 
 const clamp = (v: number, lo: number, hi: number) => Math.round(Math.min(hi, Math.max(lo, v)));
 
@@ -483,11 +508,9 @@ export function deviceGeometry(
  * Lays out one slide at a headline size. `kindOf` decides what the slide is; `bottom` is the height
  * of whatever the template draws along the bottom of every slide (BRAND-01's grid).
  */
-function layoutSlide(
-  ctx: Ctx,
-  kind: Kind,
-  bottom: { height: number; grid: Common["grid"] },
-): Laid | null {
+type Chrome = { height: number; grid: Common["grid"]; badge: string | null };
+
+function layoutSlide(ctx: Ctx, kind: Kind, bottom: Chrome): Laid | null {
   const { post, index, size, titleSize } = ctx;
   const slide = post.slides[index]!;
   const frame = slideFrame(post, index, size);
@@ -498,9 +521,20 @@ function layoutSlide(
     ? block(ctx, post.cta, box.width - TYPE.ctaIndent, TYPE.ctaSize, TYPE.ctaLineHeight, ctx.m.strong)
     : null;
   if (frame.isLast && !cta) return null;
-  const reserved = (cta ? TYPE.ctaGap + blockHeight(cta) : 0) + bottom.height;
+  const reserved =
+    (cta ? TYPE.ctaGap + blockHeight(cta) : 0) + bottom.height + (bottom.badge ? BADGE.height + BADGE.gap : 0);
   const fits = (height: number) => ctx.lenient || height + reserved <= box.height;
-  const common = { cta, grid: bottom.grid };
+  const common = { cta, grid: bottom.grid, badge: bottom.badge };
+
+  if (kind.kind === "photo") {
+    const capped = { ...ctx, titleSize: Math.min(titleSize, PHOTO.titleMax[size]) };
+    const text = layoutText(capped, slide.title, supportingOf(slide), slide.items ?? []);
+    if (!text) return null;
+    const h = textHeight(text);
+    if (!ctx.lenient && (h > box.height * PHOTO.textShare || !fits(h))) return null;
+    const photo = kind.media ? coverPhoto(kind.media, frame.width, frame.height) : null;
+    return { ...frame, ...common, kind: "photo", photo, asset: kind.asset, text };
+  }
 
   if (kind.kind === "sign") {
     const text = layoutText(ctx, kind.title, supportingOf(slide), slide.items ?? []);
@@ -580,7 +614,7 @@ function fitCarousel(
   size: SlideSize,
   m: Measures,
   kindOf: (slide: Slide) => Kind,
-  bottom: (slide: Slide) => { height: number; grid: Common["grid"] },
+  bottom: (slide: Slide) => Chrome,
 ): SlideModel[] {
   const at = (titleSize: number, i: number, lenient = false) =>
     layoutSlide({ post, index: i, size, titleSize, m, lenient }, kindOf(post.slides[i]!), bottom(post.slides[i]!));
@@ -594,7 +628,7 @@ function fitCarousel(
   });
 }
 
-const noBottom = () => ({ height: 0, grid: null });
+const noBottom = (): Chrome => ({ height: 0, grid: null, badge: null });
 
 // INSIGHT-01: typography only; the sentence is the design. -------------------------------------
 
@@ -624,7 +658,9 @@ export function brandKind(slide: Slide): Kind {
 export function brandModel(post: Post, size: SlideSize, m: Measures): SlideModel[] {
   const listsServices = post.slides.some((s) => serviceOf(s.title));
   return fitCarousel(post, size, m, brandKind, (slide) =>
-    listsServices ? { height: BRAND.gridGap + BRAND.gridHeight, grid: { active: serviceOf(slide.title) } } : noBottom(),
+    listsServices
+      ? { height: BRAND.gridGap + BRAND.gridHeight, grid: { active: serviceOf(slide.title) }, badge: null }
+      : noBottom(),
   );
 }
 
@@ -664,4 +700,48 @@ export function visualKind(slide: Slide): Kind {
 
 export function techModel(post: Post, size: SlideSize, m: Measures): SlideModel[] {
   return fitCarousel(post, size, m, visualKind, noBottom);
+}
+
+// JOURNEY-01 and LOCAL-01: photo-led, a light text overlay on a gradient. -------------------------
+
+/** JOURNEY-01: a real photo (assets/photos/) behind the text; without an `asset`, a statement. */
+export function journeyModel(
+  post: Post,
+  size: SlideSize,
+  m: Measures,
+  media: ReadonlyMap<string, Media | null>,
+): SlideModel[] {
+  return fitCarousel(
+    post,
+    size,
+    m,
+    (slide) => (slide.asset ? { kind: "photo", asset: slide.asset, media: media.get(slide.asset) ?? null } : { kind: "statement" }),
+    noBottom,
+  );
+}
+
+/** Shown on every LOCAL-01 slide: these are "What if…" concepts, never a real client. */
+export const ILLUSTRATIVE = "Illustrative concept";
+
+/**
+ * LOCAL-01: "What if…" framing. Photo slides, before/after frames (a `columns` diagram), numbered
+ * ideas (BIZ-01's sign layout) and statements, every one badged as an illustrative concept.
+ */
+export function localModel(
+  post: Post,
+  size: SlideSize,
+  m: Measures,
+  media: ReadonlyMap<string, Media | null>,
+): SlideModel[] {
+  return fitCarousel(
+    post,
+    size,
+    m,
+    (slide) => {
+      if (slide.asset) return { kind: "photo", asset: slide.asset, media: media.get(slide.asset) ?? null };
+      if (slide.diagram || slide.code) return visualKind(slide);
+      return bizKind(slide);
+    },
+    () => ({ height: 0, grid: null, badge: ILLUSTRATIVE }),
+  );
 }
