@@ -6,14 +6,16 @@
  * writes out/<id>/ (or out/<id>/<size>/ for non-feed sizes):
  *   01.png … NN.png, caption-instagram.txt, caption-facebook.txt, hashtags.txt
  *
- * Refuses posts whose client permission is pending or whose template isn't built yet, and warns
- * loudly on anything not yet APPROVED.
+ * Refuses posts whose client permission is pending, whose template isn't built yet, that still
+ * contain "[CONFIRM: …]" placeholders or that are missing a screenshot; warns loudly on anything
+ * not yet APPROVED.
  */
 import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { loadPost } from "@/lib/post/load";
 import { isTemplateBuilt, slideViews, toPng } from "@/lib/graphics/render";
 import { DEFAULT_SIZE, parseSize } from "@/lib/graphics/sizes";
+import { placeholdersIn } from "@/lib/post/schema";
 import { isCleared } from "@/lib/post/status";
 
 const RED = "\x1b[41m\x1b[97m\x1b[1m";
@@ -50,12 +52,25 @@ for (const id of ids) {
     continue;
   }
 
+  const unconfirmed = placeholdersIn(post);
+  if (unconfirmed.length) {
+    banner(RED, `${id}: NOT EXPORTED. Facts still to confirm: ${unconfirmed.join(" ")}`);
+    failed = true;
+    continue;
+  }
+  const views = await slideViews(post, size);
+  const missing = views.flatMap((v) => v.missing);
+  if (missing.length) {
+    banner(RED, `${id}: NOT EXPORTED. Missing ${missing.map((m) => `assets/${m}`).join(", ")}`);
+    failed = true;
+    continue;
+  }
+
   const dir = join(process.cwd(), "out", id, ...(size === DEFAULT_SIZE ? [] : [size]));
   await mkdir(dir, { recursive: true });
   // Clear old slides so a shorter carousel doesn't leave stale images behind.
   for (const f of await readdir(dir)) if (/^\d+\.png$/.test(f)) await rm(join(dir, f));
 
-  const views = await slideViews(post, size);
   for (const [i, view] of views.entries()) {
     await writeFile(join(dir, `${String(i + 1).padStart(2, "0")}.png`), await toPng(view.element, size));
   }

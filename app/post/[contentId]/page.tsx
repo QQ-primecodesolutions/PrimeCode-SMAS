@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { isTemplateBuilt, renderToken, slideViews } from "@/lib/graphics/render";
 import { DEFAULT_SIZE, SIZE_LABELS, SLIDE_SIZES, isSlideSize, type SlideSize } from "@/lib/graphics/sizes";
 import { listPosts } from "@/lib/post/load";
+import { placeholdersIn } from "@/lib/post/schema";
 import { formatDate } from "@/lib/post/schedule";
 import { isCleared } from "@/lib/post/status";
 import { StatusBadge } from "../../status-badge";
@@ -31,6 +32,7 @@ export default async function PostPage(props: PageProps<"/post/[contentId]">) {
       ? [`Written permission from ${post.clientPermission.client} isn't recorded. This post can't be approved or exported.`]
       : []),
     ...(built ? [] : [`Template ${post.visualTemplate} isn't built yet.`]),
+    ...placeholdersIn(post).map((p) => `Still to confirm before approval: ${p}`),
     ...views.flatMap((v) => v.warnings),
     ...(post.caption.trim() ? [] : ["The Instagram caption is empty."]),
     ...(isCleared(post.status) ? [] : [`Status is ${post.status}: not cleared for Meta Business Suite until APPROVED.`]),

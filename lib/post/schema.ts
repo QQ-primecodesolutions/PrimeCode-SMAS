@@ -130,11 +130,21 @@ export const postSchema = z
       if (future.length)
         issue(["slides"], `BRAND-01 lists only the four services we sell; remove ${future.join(", ")}`);
     }
+    if (isApprovedOrLater(post.status) && placeholdersIn(post).length)
+      issue(["status"], `Can't be ${post.status} with unconfirmed facts: ${placeholdersIn(post).join(" ")}`);
     if (perm?.status === "pending" && isApprovedOrLater(post.status))
       issue(["status"], `Can't be ${post.status} until written permission from ${perm.client} is recorded`);
   });
 
 export type Post = z.infer<typeof postSchema>;
+
+/**
+ * Facts still to confirm, written as "[CONFIRM: …]" in drafts. A post with any can be previewed,
+ * but not approved or exported.
+ */
+export function placeholdersIn(post: Pick<Post, "topic" | "hook" | "caption" | "captionFB" | "cta" | "slides">): string[] {
+  return postTexts(post).flatMap((t) => t.match(/\[CONFIRM[^\]]*\]/g) ?? []);
+}
 
 /** Every piece of text a reader can see, for client-name checks. */
 export function postTexts(post: Pick<Post, "topic" | "hook" | "caption" | "captionFB" | "cta" | "slides">): string[] {
