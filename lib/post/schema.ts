@@ -101,11 +101,13 @@ const slideFields = z.strictObject({
   mark: z.enum(["tick", "cross"]).optional(),
   diagram: diagramSchema.optional(),
   code: codeSchema.optional(),
+  /** Shows our logo large on a white panel above the text: the full logo, or the mark alone. */
+  logo: z.enum(["full", "mark"]).optional(),
 });
 
 export const slideSchema = slideFields.refine(
-  (s) => [s.asset, s.diagram, s.code].filter(Boolean).length <= 1,
-  "A slide shows one visual: an asset, a diagram or code",
+  (s) => [s.asset, s.diagram, s.code, s.logo].filter(Boolean).length <= 1,
+  "A slide shows one visual: an asset, a diagram, code or the logo",
 );
 export type Slide = z.infer<typeof slideSchema>;
 

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { fontMetrics, measurer, type Measure } from "@/lib/graphics/metrics";
-import { TYPE, bizModel, brandModel, contentBox, insightModel, type Measures, type SlideModel } from "@/lib/graphics/model";
+import { REVEAL, TYPE, bizModel, brandModel, contentBox, insightModel, type Measures, type SlideModel } from "@/lib/graphics/model";
 import { parseSize } from "@/lib/graphics/sizes";
 import { smartQuotes, wrapBalanced, wrapGreedy } from "@/lib/graphics/text";
 import { basePost } from "../post/fixtures";
@@ -163,5 +163,34 @@ describe("brandModel", () => {
   it("leaves the grid off posts that list no services", () => {
     const plain = brandModel(basePost({ visualTemplate: "BRAND-01" }), "feed", fake);
     expect(plain.every((s) => s.grid === null)).toBe(true);
+  });
+});
+
+describe("logo-reveal slides", () => {
+  const post = basePost({ slides: [{ title: "PrimeCode has a new look." }, { title: "Meet the new logo.", logo: "full" }] });
+
+  it("shows the logo on a panel in any template, sized to the logo's proportions", () => {
+    for (const model of [insightModel, bizModel, brandModel]) {
+      const slide = model(post, "feed", fake)[1]!;
+      expect(slide.kind).toBe("logo");
+      if (slide.kind !== "logo") continue;
+      expect(slide.reveal.which).toBe("full");
+      expect(slide.reveal.height / slide.reveal.width).toBeCloseTo(REVEAL.ratio.full, 2);
+      expect(slide.reveal.width).toBeLessThan(slide.panel.width);
+    }
+  });
+
+  it("uses the logo files' viewBox proportions", () => {
+    for (const [which, file] of [["full", "logo.svg"], ["mark", "mark.svg"]] as const) {
+      const [, , w, h] = /viewBox="([^"]+)"/.exec(readFileSync(`assets/brand/${file}`, "utf8"))![1]!.split(" ").map(Number);
+      expect(REVEAL.ratio[which]).toBeCloseTo(h! / w!, 5);
+    }
+  });
+
+  it("fits a reveal with a two-line headline and the CTA at every size", () => {
+    const last = basePost({
+      slides: [post.slides[0]!, { title: "Same PrimeCode. Now it looks like home.", logo: "mark" }],
+    });
+    for (const size of ["feed", "square", "story"] as const) expect(insightModel(last, size, fake).some((s) => s.overflow)).toBe(false);
   });
 });

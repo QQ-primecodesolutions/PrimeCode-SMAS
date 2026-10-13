@@ -7,7 +7,7 @@ import { contentBox, type SlideModel } from "../model";
 import { Badge, Cta, DarkFrame, themeOf } from "../parts";
 import { Checklist, SignBody } from "./biz-01";
 import { ServiceBody, ServiceGrid } from "./brand-01";
-import { StatementBody } from "./insight-01";
+import { LogoBody, StatementBody } from "./insight-01";
 import { CodeBody } from "./code-01";
 import { PhotoBackdrop, PhotoBody } from "./journey-01";
 import { DeviceBody } from "./project-01";
@@ -39,6 +39,8 @@ export function SlideCanvas({ model, logo }: { model: SlideModel; logo: SlideLog
           <CodeBody model={model} />
         ) : model.kind === "photo" ? (
           <PhotoBody model={model} />
+        ) : model.kind === "logo" ? (
+          <LogoBody model={model} logo={logo} />
         ) : (
           <StatementBody model={model} />
         )}

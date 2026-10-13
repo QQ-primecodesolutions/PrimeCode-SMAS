@@ -101,6 +101,8 @@ photo-led.
 - **Missing assets:** a missing photo or screenshot shows a placeholder in the preview and blocks
   export.
 - **All templates:** the opening and closing slides use the INSIGHT-01 statement layout.
+- **Logo reveal (any template):** a slide with `"logo": "full"` (or `"mark"`) shows our logo large
+  on a white panel above its text. It counts as the slide's one visual. Used by PC-027 (rebrand).
 
 Build one template end to end (model → layout → preview → export → tests) before starting the
 next. Then render the posts that use it and show the PNGs.

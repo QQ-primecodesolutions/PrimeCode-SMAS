@@ -153,6 +153,16 @@ export const DEVICE = {
   laptopScreen: 1.6,
 } as const;
 
+/** Logo-reveal slides (`"logo": "full" | "mark"`): the logo on a white panel above the text. */
+export const REVEAL = {
+  /** Height of the panel, per output size. */
+  height: { feed: 520, square: 280, story: 760 } satisfies Record<SlideSize, number>,
+  pad: 56,
+  radius: 32,
+  /** Height / width of assets/brand/logo.svg and mark.svg, from their viewBoxes. */
+  ratio: { full: 701 / 720, mark: 1 },
+} as const;
+
 /** Photo-led slides (JOURNEY-01, LOCAL-01): a full-bleed photo with the text low on the slide. */
 export const PHOTO = {
   /** The text may take at most this share of the content area, so the photo shows. */
@@ -292,7 +302,18 @@ export type CodeSlide = SlideFrame & Common & { kind: "code"; code: CodeModel; t
 /** A full-bleed photo covering the slide (centre-cropped); null when the file is missing. */
 export type Photo = { src: string; width: number; height: number; left: number; top: number };
 export type PhotoSlide = SlideFrame & Common & { kind: "photo"; photo: Photo | null; asset: string; text: Text };
-export type SlideModel = StatementSlide | SignSlide | ServiceSlide | DeviceSlide | DiagramSlide | CodeSlide | PhotoSlide;
+export type LogoWhich = keyof typeof REVEAL.ratio;
+export type LogoSlide = SlideFrame &
+  Common & { kind: "logo"; reveal: { which: LogoWhich; width: number; height: number }; panel: Box; text: Text };
+export type SlideModel =
+  | StatementSlide
+  | SignSlide
+  | ServiceSlide
+  | DeviceSlide
+  | DiagramSlide
+  | CodeSlide
+  | PhotoSlide
+  | LogoSlide;
 
 /** Omit applied to each member of a union, keeping the members apart. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -373,7 +394,8 @@ type Kind =
   | { kind: "device"; asset: string; media: Media | null; label?: string; title?: string; supporting?: string }
   | { kind: "diagram"; diagram: Diagram }
   | { kind: "code"; code: Code }
-  | { kind: "photo"; asset: string; media: Media | null };
+  | { kind: "photo"; asset: string; media: Media | null }
+  | { kind: "logo"; which: LogoWhich };
 
 /** Scales `media` to cover a `width` x `height` slide, centred. */
 export function coverPhoto(media: Media, width: number, height: number): Photo {
@@ -544,6 +566,16 @@ function layoutSlide(ctx: Ctx, kind: Kind, bottom: Chrome): Laid | null {
     return { ...frame, ...common, theme: "navy", kind: "photo", photo, asset: kind.asset, text };
   }
 
+  if (kind.kind === "logo") {
+    const text = layoutText(ctx, slide.title, supportingOf(slide), slide.items ?? []);
+    const h = REVEAL.height[size];
+    if (!text || !fits(h + gap + textHeight(text))) return null;
+    const ratio = REVEAL.ratio[kind.which];
+    const width = Math.min(Math.round((h - 2 * REVEAL.pad) / ratio), box.width - 2 * REVEAL.pad);
+    const reveal = { which: kind.which, width, height: Math.round(width * ratio) };
+    return { ...frame, ...common, kind: "logo", reveal, panel: { width: box.width, height: h }, text };
+  }
+
   if (kind.kind === "sign") {
     const text = layoutText(ctx, kind.title, supportingOf(slide), slide.items ?? []);
     const checklist = BIZ.checklistGap + BIZ.check;
@@ -615,7 +647,7 @@ function layoutSlide(ctx: Ctx, kind: Kind, bottom: Chrome): Laid | null {
 /**
  * Every slide of a post at one shared headline size: the largest size at which every slide fits,
  * so the set looks consistent when swiped. If even the smallest size doesn't fit, the slides that
- * overflow are drawn anyway and flagged.
+ * overflow are drawn anyway and flagged. A slide with `logo` is a logo reveal in every template.
  */
 function fitCarousel(
   post: Post,
@@ -625,7 +657,8 @@ function fitCarousel(
   bottom: (slide: Slide) => Chrome,
 ): SlideModel[] {
   const at = (titleSize: number, i: number, lenient = false) =>
-    layoutSlide({ post, index: i, size, titleSize, m, lenient }, kindOf(post.slides[i]!), bottom(post.slides[i]!));
+    layoutSlide({ post, index: i, size, titleSize, m, lenient }, kindFor(post.slides[i]!), bottom(post.slides[i]!));
+  const kindFor = (slide: Slide): Kind => (slide.logo ? { kind: "logo", which: slide.logo } : kindOf(slide));
   for (let t = TYPE.titleMax[size]; t >= TYPE.titleMin; t -= 2) {
     const slides = post.slides.map((_, i) => at(t, i));
     if (slides.every((s) => s !== null)) return slides.map((s) => ({ ...s!, overflow: false }) as SlideModel);

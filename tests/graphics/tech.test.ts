@@ -151,6 +151,8 @@ describe("slide visuals", () => {
       code: { language: "text" as const, source: "x" },
     };
     expect(postSchema.safeParse(basePost({ slides: [slide, { title: "B" }] })).success).toBe(false);
+    const logo = { title: "Logo and code", logo: "full" as const, code: { language: "text" as const, source: "x" } };
+    expect(postSchema.safeParse(basePost({ slides: [logo, { title: "B" }] })).success).toBe(false);
   });
 
   it("keeps diagrams small enough to read", () => {

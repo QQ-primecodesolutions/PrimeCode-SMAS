@@ -1,0 +1,52 @@
+{
+  "contentId": "PC-2026-027",
+  "week": 1,
+  "publishDate": "2026-10-16",
+  "series": "PrimeCode Journey",
+  "pillar": "Founder / Brand",
+  "topic": "PrimeCode has a new look",
+  "audience": "Everyone / local community",
+  "objective": "Introduce the new logo and the story behind it before the calendar starts",
+  "format": "Carousel",
+  "platform": "IG + FB",
+  "hook": "PrimeCode has a new look.",
+  "caption": "PrimeCode has a new look.\n\nLook at the skyline in the new logo. It's the Amphitheatre at Mont-aux-Sources, the wall of the Drakensberg above Qwaqwa.\n\nThe small stroke in the notch is a prime (′). In maths, a′ is read \"a prime\". It's the Prime in PrimeCode.\n\nAnd it all sits on a screen, because that's where we do our work: websites, web applications and custom software, built in Phuthaditjhaba.\n\nThe company is the same. Only the logo is new, and now it looks like where we're from.\n\nFrom Tuesday you'll hear from us twice a week. Follow along.",
+  "cta": "Follow along. We post every Tuesday and Friday.",
+  "visualTemplate": "INSIGHT-01",
+  "theme": "navy",
+  "visualBrief": "Typographic carousel on the navy brand background, with the new logo shown large on a white panel (logo-reveal slides). No stock imagery, and never the old helmet logo.",
+  "hashtags": [
+    "#PrimeCodeSolutions",
+    "#Qwaqwa",
+    "#Phuthaditjhaba",
+    "#Drakensberg"
+  ],
+  "status": "DRAFT",
+  "notes": "Rebrand announcement added 2026-10-13, outside the workbook: Fri 16 Oct, the Friday before PC-001. Same day: change the Facebook and Instagram profile pictures (assets/brand/export/profile-1080.png) and merge the website's new-logo branch, so people who click through see the new logo. Check that 001's opener ('This page has been quiet') still reads right four days later. Founder: adjust the wording to your own voice.",
+  "slides": [
+    {
+      "title": "PrimeCode has a new look.",
+      "subtitle": "Same company. Same work. A new logo."
+    },
+    {
+      "title": "Meet the new logo.",
+      "logo": "full"
+    },
+    {
+      "title": "Look at the skyline.",
+      "subtitle": "It's the Amphitheatre at Mont-aux-Sources: the Drakensberg wall above Qwaqwa."
+    },
+    {
+      "title": "The stroke in the notch is a prime.",
+      "subtitle": "In maths, a′ is read \"a prime\". It's the Prime in PrimeCode."
+    },
+    {
+      "title": "It sits on a screen, because that's where we build.",
+      "subtitle": "Websites, web applications and custom software, made in Phuthaditjhaba."
+    },
+    {
+      "title": "Same PrimeCode. Now it looks like home.",
+      "logo": "mark"
+    }
+  ]
+}
