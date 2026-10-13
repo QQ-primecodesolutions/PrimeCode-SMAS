@@ -3,6 +3,7 @@
  * Calendar columns (camelCased), plus `slides`, `captionFB` and `clientPermission`.
  */
 import { z } from "zod";
+import { THEME_NAMES, type ThemeName } from "@/brand/tokens";
 import { clientsNamedIn } from "./clients";
 import { futureServicesIn } from "./services";
 import { STATUSES, isApprovedOrLater, isEarly } from "./status";
@@ -147,6 +148,8 @@ export const postSchema = z
     captionFB: text.optional(),
     cta: text,
     visualTemplate: z.enum(TEMPLATES),
+    /** Colour theme; defaults to the series' theme (SERIES_THEME in brand/tokens.ts). */
+    theme: z.enum(THEME_NAMES as [ThemeName, ...ThemeName[]]).optional(),
     visualBrief: text,
     hashtags: z.array(z.string().regex(/^#[\p{L}\p{N}_]+$/u, "Hashtags look like #Word")).max(30),
     status: z.enum(STATUSES),

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PrimeCode">
+  <title>PrimeCode</title>
+  <rect x="36" y="60" width="440" height="310" rx="40" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0f3b6e" stroke-width="20"/>
+  <path d="M36 318 H476" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0f3b6e" stroke-width="20"/>
+  <path d="M226 370 L216 428 M286 370 L296 428 M184 436 H328" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0f3b6e" stroke-width="20"/>
+  <path d="M110 140 L80 177 L110 214 M402 140 L432 177 L402 214" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#93c5fd" stroke-width="14"/>
+  <path d="M78 250 H118 M92 276 H128 M394 250 H434 M384 276 H420" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#93c5fd" stroke-width="12"/>
+  <path d="M147 257 L165 234 L172 187 L177 180 L213 176 L218 182 L222 234 L258 234 L263 182 L266 176 L295 174 L299 180 L302 210 L312 210 L315 148 L319 142 L347 142 L351 148 L359 220 L366 257 L366 257 Z" fill="#93c5fd"/>
+  <path d="M147 257 L165 234 L172 187 L177 180 L213 176 L218 182 L222 234 L258 234 L263 182 L266 176 L295 174 L299 180 L302 210 L312 210 L315 148 L319 142 L347 142 L351 148 L359 220 L366 257" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#0f3b6e" stroke-width="12"/>
+  <path d="M238 208 L244 178" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="#2563eb" stroke-width="12"/>
+</svg>

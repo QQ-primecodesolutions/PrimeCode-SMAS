@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "import-calendar": "tsx scripts/import-calendar.ts",
     "reschedule": "tsx scripts/reschedule.ts",
-    "export": "tsx scripts/export.ts"
+    "export": "tsx scripts/export.ts",
+    "contact-sheet": "tsx scripts/contact-sheet.tsx"
   },
   "dependencies": {
     "next": "16.3.6",

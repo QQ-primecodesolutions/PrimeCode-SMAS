@@ -49,10 +49,12 @@ larger plan, kept for reference (template analysis §6, output specs, scope §13
 - `app/`: the preview pages and a thin render route. `scripts/`: the import, reschedule and export.
 - `brand/brand-brain.md`: positioning, voice and the rules for what we may claim. This copy is the
   maintained one.
-- `brand/tokens.ts`: the website's palette, Inter and JetBrains Mono, and the logo.
+- `brand/tokens.ts`: the website's palette, the colour `THEMES` and the series-to-theme mapping,
+  Inter and JetBrains Mono, and the logo.
 - `assets/`:
   - `fonts/`: TTF only, with their OFL licences
-  - `brand/logo.png`
+  - `brand/`: the logo as SVGs (`logo.svg`, `mark.svg`, `symbol.svg`, `symbol-reversed.svg`),
+    PNG exports in `brand/export/`, and the retired helmet logo in `brand/archive/` (never use it)
   - `shots/`: client site screenshots
   - `photos/`: photos for JOURNEY-01 and LOCAL-01 (see its README)
 - The workbook `primecode-content-calendar.xlsx` is the archive and holds the Analytics sheet.
@@ -102,6 +104,19 @@ photo-led.
 
 Build one template end to end (model → layout → preview → export → tests) before starting the
 next. Then render the posts that use it and show the PNGs.
+
+## Logo
+- **The design:** the Mont-aux-Sources Amphitheatre (the Drakensberg above QwaQwa) on a monitor,
+  with the prime stroke (′) standing in the notch where the wall's needle is. The wordmark is Inter.
+- **Generated, not hand-edited:** `scripts/brand/build_logo.py` draws every SVG on a 512 grid, with
+  the wordmark shaped by HarfBuzz and converted to outlines. It runs in a throwaway venv with
+  fontTools and uharfbuzz (instructions in the script).
+- **Review and export:**
+  - `npx tsx scripts/brand/review-logo.tsx` renders `out/logo-review.png` at 512, 128 and 32 px.
+  - `npx tsx scripts/brand/export-logo.tsx` writes the PNGs.
+- **On slides:** the compact `symbol.svg` (taller, no monitor) sits on a tile: white on dark themes,
+  logo navy `#0f3b6e` with `symbol-reversed.svg` on light themes (`Theme.logoTile`).
+- **Concepts:** the AI drafts in `assets/brand/concepts/` are not in git.
 
 ## Satori rules
 - **Layout:**

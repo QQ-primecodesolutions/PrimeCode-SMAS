@@ -2,8 +2,9 @@
  * One slide: the dark frame, the body for the slide's kind (centred), then the CTA on the final
  * slide and whatever the template keeps along the bottom (BIZ-01 checklist, BRAND-01 grid).
  */
+import type { SlideLogo } from "../assets";
 import { contentBox, type SlideModel } from "../model";
-import { Badge, Cta, DarkFrame } from "../parts";
+import { Badge, Cta, DarkFrame, themeOf } from "../parts";
 import { Checklist, SignBody } from "./biz-01";
 import { ServiceBody, ServiceGrid } from "./brand-01";
 import { StatementBody } from "./insight-01";
@@ -12,10 +13,11 @@ import { PhotoBackdrop, PhotoBody } from "./journey-01";
 import { DeviceBody } from "./project-01";
 import { DiagramBody } from "./tech-01";
 
-export function SlideCanvas({ model, logo }: { model: SlideModel; logo: string }) {
+export function SlideCanvas({ model, logo }: { model: SlideModel; logo: SlideLogo }) {
+  const t = themeOf(model);
   return (
     <DarkFrame frame={model} logo={logo} backdrop={model.kind === "photo" ? <PhotoBackdrop model={model} /> : undefined}>
-      {model.badge ? <Badge text={model.badge} /> : null}
+      {model.badge ? <Badge text={model.badge} t={t} /> : null}
       {/* Photo slides keep their text low so the photo shows; the rest are centred. */}
       <div
         style={{
@@ -41,9 +43,9 @@ export function SlideCanvas({ model, logo }: { model: SlideModel; logo: string }
           <StatementBody model={model} />
         )}
       </div>
-      {model.cta ? <Cta block={model.cta} /> : null}
+      {model.cta ? <Cta block={model.cta} t={t} /> : null}
       {model.kind === "sign" ? <Checklist model={model} /> : null}
-      {model.grid ? <ServiceGrid active={model.grid.active} width={contentBox(model.size).width} /> : null}
+      {model.grid ? <ServiceGrid active={model.grid.active} width={contentBox(model.size).width} t={t} /> : null}
     </DarkFrame>
   );
 }

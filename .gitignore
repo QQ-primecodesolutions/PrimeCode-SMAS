@@ -33,3 +33,6 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI-generated logo concepts (drafts; the real logo is assets/brand/*.svg)
+/assets/brand/concepts/

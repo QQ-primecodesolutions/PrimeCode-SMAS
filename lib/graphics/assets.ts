@@ -22,12 +22,14 @@ const FILES = [
 
 export type FontKey = `${(typeof FILES)[number][0]}/${(typeof FILES)[number][2]}`;
 
+export type SlideLogo = { symbol: string; reversed: string };
+
 export type SlideAssets = {
   fonts: FontOption[];
   /** Width measurer for a font, with letter-spacing in em. */
   measure: (font: FontKey, letterSpacing?: number) => Measure;
-  /** The full logo as a data URI. */
-  logo: string;
+  /** The logo symbol as data URIs: full colour, and reversed for the navy tile. */
+  logo: SlideLogo;
 };
 
 let assets: Promise<SlideAssets> | null = null;
@@ -45,7 +47,11 @@ export function loadSlideAssets(): Promise<SlideAssets> {
       })),
     );
     const metrics = new Map(fonts.map((f) => [`${f.name}/${f.weight}`, fontMetrics(f.data)]));
-    const logo = `data:image/png;base64,${(await readFile(join(process.cwd(), "assets", "brand", "logo.png"))).toString("base64")}`;
+    const svg = (data: Buffer) => `data:image/svg+xml;base64,${data.toString("base64")}`;
+    const logo = {
+      symbol: svg(await readFile(join(process.cwd(), "assets", "brand", "symbol.svg"))),
+      reversed: svg(await readFile(join(process.cwd(), "assets", "brand", "symbol-reversed.svg"))),
+    };
     return {
       fonts,
       logo,

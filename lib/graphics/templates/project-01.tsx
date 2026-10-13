@@ -4,12 +4,13 @@
  * become mono labels. Never show a client's site without written permission (clientPermission).
  */
 import { DEVICE, TYPE, type DeviceSlide } from "../model";
-import { DeviceFrame, TextBody } from "../parts";
+import { DeviceFrame, TextBody, themeOf } from "../parts";
 
 export function DeviceBody({ model }: { model: DeviceSlide }) {
+  const t = themeOf(model);
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      {/* The stage: a soft brand-blue panel the device sits centred on. */}
+      {/* The stage: a soft panel the device sits centred on. */}
       <div
         style={{
           display: "flex",
@@ -18,12 +19,12 @@ export function DeviceBody({ model }: { model: DeviceSlide }) {
           height: DEVICE.height[model.size] + 2 * DEVICE.stagePad,
           marginBottom: model.text.title.fontSize * TYPE.gap,
           borderRadius: 32,
-          backgroundImage: "linear-gradient(160deg, rgba(37, 99, 235, 0.22) 0%, rgba(6, 182, 212, 0.08) 100%)",
+          backgroundImage: t.stage,
         }}
       >
         <DeviceFrame device={model.device} />
       </div>
-      <TextBody text={model.text} />
+      <TextBody text={model.text} t={t} />
     </div>
   );
 }

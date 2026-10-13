@@ -3,6 +3,7 @@
  * counter, CTA).
  * No file or font access; text widths come in through `measure`, so this is unit-tested with a fake.
  */
+import { SERIES_THEME, type ThemeName } from "@/brand/tokens";
 import type { Code, Diagram, Post, Slide, TemplateCode } from "@/lib/post/schema";
 import { SERVICES, type ServiceKey, serviceOf } from "@/lib/post/services";
 import { highlightLines, type Token } from "./code";
@@ -52,7 +53,12 @@ export type SlideFrame = {
   series: string;
   /** Where the logo tile sits. TECH-01 puts it bottom-right (Reference sheet); the rest top-left. */
   logo: "top" | "bottom";
+  /** Colour theme (brand/tokens.ts THEMES): the post's override, else its series' theme. */
+  theme: ThemeName;
 };
+
+/** A post's colour theme: its own `theme`, else its series' (SERIES_THEME). */
+export const themeFor = (post: Pick<Post, "theme" | "series">): ThemeName => post.theme ?? SERIES_THEME[post.series];
 
 /** Templates whose design direction puts the logo bottom-right. */
 const LOGO_BOTTOM: readonly TemplateCode[] = ["TECH-01"];
@@ -68,6 +74,7 @@ export function slideFrame(post: Post, index: number, size: SlideSize): SlideFra
     isLast: index === total - 1,
     series: post.series,
     logo: LOGO_BOTTOM.includes(post.visualTemplate) ? "bottom" : "top",
+    theme: themeFor(post),
   };
 }
 
@@ -533,7 +540,8 @@ function layoutSlide(ctx: Ctx, kind: Kind, bottom: Chrome): Laid | null {
     const h = textHeight(text);
     if (!ctx.lenient && (h > box.height * PHOTO.textShare || !fits(h))) return null;
     const photo = kind.media ? coverPhoto(kind.media, frame.width, frame.height) : null;
-    return { ...frame, ...common, kind: "photo", photo, asset: kind.asset, text };
+    // Photo text sits on a dark scrim over the photo, whatever the series' theme.
+    return { ...frame, ...common, theme: "navy", kind: "photo", photo, asset: kind.asset, text };
   }
 
   if (kind.kind === "sign") {

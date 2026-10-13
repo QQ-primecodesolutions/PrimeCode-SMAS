@@ -1,10 +1,11 @@
 /**
  * Shared Satori pieces. Satori supports only part of CSS: every element with more than one child
  * needs `display: flex`, text is a single string child, and there's no z-index (later siblings
- * paint on top).
+ * paint on top). Colours come only from the slide's theme (brand/tokens.ts THEMES) or the fixed
+ * device and code-panel colours; never hard-code one here.
  */
 import type { CSSProperties, ReactNode } from "react";
-import { CODE_COLORS, COLORS, FONTS, GRADIENT_DARK, LOGO } from "@/brand/tokens";
+import { CODE_COLORS, CODE_PANEL, COLORS, DEVICE_COLORS, FONTS, LOGO, THEMES, type Theme } from "@/brand/tokens";
 import {
   BADGE,
   type Block,
@@ -20,16 +21,23 @@ import {
   TYPE,
   type Text,
 } from "./model";
+import type { SlideLogo } from "./assets";
 import { nbsp, upper } from "./text";
 
 /** The site the logo links people to (PrimeCode/Web CNAME). */
 export const WEBSITE = "primecodesolutions.co.za";
 
-/** The helmet-and-monitor mark, cropped from the full logo, on a white rounded tile. */
-export function LogoTile({ logo, size }: { logo: string; size: number }) {
-  const inset = Math.round(size * 0.1);
+/** The slide's theme. */
+export const themeOf = (frame: Pick<SlideFrame, "theme">): Theme => THEMES[frame.theme];
+
+/**
+ * The logo symbol (assets/brand/symbol.svg) on a rounded tile: white on dark themes, the logo navy
+ * with the reversed symbol on light themes, so every slide carries the same app-icon shape.
+ */
+export function LogoTile({ logo, size, t }: { logo: SlideLogo; size: number; t: Theme }) {
+  const inset = Math.round(size * LOGO.tileInset);
   const inner = size - 2 * inset;
-  const scale = inner / LOGO.markCrop.size;
+  const tile = t.logoTile === "white" ? COLORS.white : t.logoTile === "navy" ? COLORS.logoNavy : null;
   return (
     <div
       style={{
@@ -37,20 +45,12 @@ export function LogoTile({ logo, size }: { logo: string; size: number }) {
         width: size,
         height: size,
         borderRadius: Math.round(size * 0.22),
-        background: COLORS.white,
         padding: inset,
+        ...(tile ? { background: tile } : {}),
       }}
     >
-      <div style={{ display: "flex", width: inner, height: inner, overflow: "hidden", position: "relative" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- Satori, not the DOM */}
-        <img
-          src={logo}
-          alt=""
-          width={LOGO.width * scale}
-          height={LOGO.height * scale}
-          style={{ position: "absolute", left: -LOGO.markCrop.x * scale, top: -LOGO.markCrop.y * scale }}
-        />
-      </div>
+      {/* eslint-disable-next-line @next/next/no-img-element -- Satori, not the DOM */}
+      <img src={t.logoTile === "navy" ? logo.reversed : logo.symbol} alt="" width={inner} height={inner} />
     </div>
   );
 }
@@ -63,8 +63,8 @@ const label: CSSProperties = {
 };
 
 /**
- * Dark slide: brand gradient background, logo tile and series label on top, website and counter at
- * the bottom. `children` fill the content area (see `contentBox`).
+ * The slide frame: themed background, logo and series label on top, website and counter at the
+ * bottom. `children` fill the content area (see `contentBox`).
  */
 export function DarkFrame({
   frame,
@@ -73,11 +73,12 @@ export function DarkFrame({
   children,
 }: {
   frame: SlideFrame;
-  logo: string;
+  logo: SlideLogo;
   /** A full-bleed layer (e.g. a photo) drawn first, under everything else. */
   backdrop?: ReactNode;
   children: ReactNode;
 }) {
+  const t = themeOf(frame);
   return (
     <div
       style={{
@@ -87,10 +88,10 @@ export function DarkFrame({
         width: frame.width,
         height: frame.height,
         padding: `${FRAME.padY[frame.size]}px ${FRAME.pad}px`,
-        backgroundColor: COLORS.bg,
-        backgroundImage: `radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.32) 0%, rgba(37, 99, 235, 0) 55%), ${GRADIENT_DARK}`,
+        backgroundColor: t.bg[0],
+        backgroundImage: `radial-gradient(circle at 100% 100%, ${t.glow} 0%, rgba(0, 0, 0, 0) 55%), linear-gradient(160deg, ${t.bg[0]} 0%, ${t.bg[1]} 100%)`,
         fontFamily: FONTS.sans,
-        color: COLORS.white,
+        color: t.headline,
       }}
     >
       {/* No z-index in Satori: the backdrop comes first so the frame paints over it. */}
@@ -101,14 +102,14 @@ export function DarkFrame({
       ) : null}
       {frame.logo === "top" ? (
         <div style={{ display: "flex", height: FRAME.top, alignItems: "center", justifyContent: "space-between" }}>
-          <LogoTile logo={logo} size={FRAME.top} />
+          <LogoTile logo={logo} size={FRAME.top} t={t} />
           <div
             style={{
               ...label,
               display: "flex",
-              color: COLORS.accent,
+              color: t.label,
               // On a photo, sit the label on a dark pill so it reads over bright areas.
-              ...(backdrop ? { padding: "8px 18px", borderRadius: 30, background: "rgba(15, 23, 42, 0.72)" } : {}),
+              ...(backdrop ? { padding: "8px 18px", borderRadius: 30, background: t.badgeFill } : {}),
             }}
           >
             {upper(frame.series)}
@@ -117,9 +118,9 @@ export function DarkFrame({
       ) : (
         // Logo bottom-right: the series and counter move up into a slim top bar.
         <div style={{ ...label, display: "flex", height: FRAME.foot, alignItems: "flex-start", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", color: COLORS.accent }}>{upper(frame.series)}</div>
+          <div style={{ display: "flex", color: t.label }}>{upper(frame.series)}</div>
           {frame.counter ? (
-            <div style={{ display: "flex", color: COLORS.lightMuted, fontWeight: 400, letterSpacing: "0.04em" }}>
+            <div style={{ display: "flex", color: t.muted, fontWeight: 400, letterSpacing: "0.04em" }}>
               {nbsp(frame.counter)}
             </div>
           ) : null}
@@ -146,14 +147,14 @@ export function DarkFrame({
           height: frame.logo === "top" ? FRAME.foot : FRAME.top,
           alignItems: "flex-end",
           justifyContent: "space-between",
-          color: COLORS.lightMuted,
+          color: t.muted,
           fontWeight: 400,
           letterSpacing: "0.04em",
         }}
       >
         <div style={{ display: "flex" }}>{WEBSITE}</div>
         {frame.logo === "bottom" ? (
-          <LogoTile logo={logo} size={FRAME.top} />
+          <LogoTile logo={logo} size={FRAME.top} t={t} />
         ) : frame.counter ? (
           <div style={{ display: "flex" }}>{nbsp(frame.counter)}</div>
         ) : null}
@@ -184,7 +185,7 @@ export function Lines({ block, style }: { block: Block; style?: CSSProperties })
 }
 
 /** Headline, supporting text and list (a slide's `Text`), stacked with the shared gap. */
-export function TextBody({ text }: { text: Text }) {
+export function TextBody({ text, t }: { text: Text; t: Theme }) {
   const gap = text.title.fontSize * TYPE.gap;
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -196,15 +197,15 @@ export function TextBody({ text }: { text: Text }) {
             height: LABEL.height,
             alignItems: "center",
             fontSize: LABEL.size,
-            color: COLORS.accent,
+            color: t.label,
             marginBottom: gap,
           }}
         >
           {upper(text.label)}
         </div>
       ) : null}
-      <Lines block={text.title} style={{ fontWeight: 800, letterSpacing: `${TYPE.titleTracking}em` }} />
-      {text.subtitle ? <Lines block={text.subtitle} style={{ marginTop: gap, color: COLORS.lightMuted }} /> : null}
+      <Lines block={text.title} style={{ fontWeight: 800, letterSpacing: `${TYPE.titleTracking}em`, color: t.headline }} />
+      {text.subtitle ? <Lines block={text.subtitle} style={{ marginTop: gap, color: t.body }} /> : null}
       {text.items.length ? (
         <div style={{ display: "flex", flexDirection: "column", marginTop: gap }}>
           {text.items.map((item, i) => (
@@ -216,9 +217,9 @@ export function TextBody({ text }: { text: Text }) {
                   paddingTop: (item.fontSize * item.lineHeight) / 2 - 4,
                 }}
               >
-                <div style={{ display: "flex", width: item.fontSize * 0.55, height: 8, borderRadius: 4, background: COLORS.accent }} />
+                <div style={{ display: "flex", width: item.fontSize * 0.55, height: 8, borderRadius: 4, background: t.accent }} />
               </div>
-              <Lines block={item} style={{ fontWeight: 600 }} />
+              <Lines block={item} style={{ fontWeight: 600, color: t.headline }} />
             </div>
           ))}
         </div>
@@ -227,18 +228,18 @@ export function TextBody({ text }: { text: Text }) {
   );
 }
 
-/** The call to action, behind a cyan rule. */
-export function Cta({ block }: { block: Block }) {
+/** The call to action, behind an accent rule. */
+export function Cta({ block, t }: { block: Block; t: Theme }) {
   return (
     <div
       style={{
         display: "flex",
         marginTop: TYPE.ctaGap,
-        borderLeft: `6px solid ${COLORS.accent}`,
+        borderLeft: `6px solid ${t.accent}`,
         paddingLeft: TYPE.ctaIndent - 6,
       }}
     >
-      <Lines block={block} style={{ fontWeight: 600, color: COLORS.white }} />
+      <Lines block={block} style={{ fontWeight: 600, color: t.headline }} />
     </div>
   );
 }
@@ -281,9 +282,6 @@ export function Icon({ name, size, color, stroke = 2 }: { name: keyof typeof ICO
   );
 }
 
-const BEZEL = "#0b1220";
-const OUTLINE = "0 0 0 2px #334155, 0 30px 60px rgba(0, 0, 0, 0.45)";
-
 /** The screen: the screenshot (top-aligned, cropped), or a labelled placeholder if it's missing. */
 function Screen({ device }: { device: Device }) {
   const { screen, image } = device;
@@ -298,7 +296,7 @@ function Screen({ device }: { device: Device }) {
         height: screen.height,
         borderRadius: screen.radius,
         overflow: "hidden",
-        background: COLORS.bg2,
+        background: DEVICE_COLORS.screen,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
@@ -315,11 +313,13 @@ function Screen({ device }: { device: Device }) {
         />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", fontFamily: FONTS.mono }}>
-          <div style={{ display: "flex", fontWeight: 600, fontSize: 22, color: COLORS.accent }}>{upper("Screenshot")}</div>
-          <div style={{ display: "flex", fontWeight: 600, fontSize: 22, color: COLORS.accent, marginBottom: 12 }}>
+          <div style={{ display: "flex", fontWeight: 600, fontSize: 22, color: DEVICE_COLORS.placeholder }}>
+            {upper("Screenshot")}
+          </div>
+          <div style={{ display: "flex", fontWeight: 600, fontSize: 22, color: DEVICE_COLORS.placeholder, marginBottom: 12 }}>
             {upper("needed")}
           </div>
-          <div style={{ display: "flex", fontSize: nameSize, color: COLORS.lightMuted }}>{name}</div>
+          <div style={{ display: "flex", fontSize: nameSize, color: DEVICE_COLORS.placeholderText }}>{name}</div>
         </div>
       )}
       {device.type === "phone" ? (
@@ -333,7 +333,7 @@ function Screen({ device }: { device: Device }) {
             width: Math.round(screen.width * 0.28),
             height: Math.round(device.bezel * 1.1),
             borderRadius: device.bezel,
-            background: BEZEL,
+            background: DEVICE_COLORS.bezel,
           }}
         />
       ) : null}
@@ -352,8 +352,8 @@ export function DeviceFrame({ device }: { device: Device }) {
           height: device.height,
           padding: device.bezel,
           borderRadius: device.screen.radius + device.bezel,
-          background: BEZEL,
-          boxShadow: OUTLINE,
+          background: DEVICE_COLORS.bezel,
+          boxShadow: DEVICE_COLORS.outline,
         }}
       >
         <Screen device={device} />
@@ -371,8 +371,8 @@ export function DeviceFrame({ device }: { device: Device }) {
           height: lid.height,
           padding: device.bezel,
           borderRadius: `${device.bezel * 1.4}px ${device.bezel * 1.4}px 4px 4px`,
-          background: BEZEL,
-          boxShadow: OUTLINE,
+          background: DEVICE_COLORS.bezel,
+          boxShadow: DEVICE_COLORS.outline,
         }}
       >
         <Screen device={device} />
@@ -384,7 +384,7 @@ export function DeviceFrame({ device }: { device: Device }) {
           width: base.width,
           height: base.height,
           borderRadius: `2px 2px ${base.height}px ${base.height}px`,
-          backgroundImage: "linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%)",
+          backgroundImage: DEVICE_COLORS.base,
         }}
       >
         <div
@@ -393,7 +393,7 @@ export function DeviceFrame({ device }: { device: Device }) {
             width: Math.round(base.width * 0.16),
             height: Math.round(base.height * 0.4),
             borderRadius: `0 0 ${base.height}px ${base.height}px`,
-            background: "#64748b",
+            background: DEVICE_COLORS.hinge,
           }}
         />
       </div>
@@ -403,11 +403,8 @@ export function DeviceFrame({ device }: { device: Device }) {
 
 // Diagram primitives: box, arrow, label. ----------------------------------------------------------
 
-const BOX_FILL = "rgba(37, 99, 235, 0.14)";
-const BOX_EDGE = "2px solid rgba(6, 182, 212, 0.55)";
-
 /** A rounded box holding a label and an optional note. */
-export function Box({ box }: { box: FlowBox }) {
+export function Box({ box, t }: { box: FlowBox; t: Theme }) {
   return (
     <div
       style={{
@@ -418,33 +415,43 @@ export function Box({ box }: { box: FlowBox }) {
         height: box.height,
         padding: `${box.padY}px ${DIAGRAM.pad}px`,
         borderRadius: DIAGRAM.radius,
-        background: BOX_FILL,
-        border: BOX_EDGE,
+        background: t.boxFill,
+        border: `2px solid ${t.boxEdge}`,
       }}
     >
-      <Lines block={box.label} style={{ fontWeight: 600 }} />
-      {box.note ? <Lines block={box.note} style={{ marginTop: DIAGRAM.noteGap, color: COLORS.lightMuted }} /> : null}
+      <Lines block={box.label} style={{ fontWeight: 600, color: t.headline }} />
+      {box.note ? <Lines block={box.note} style={{ marginTop: DIAGRAM.noteGap, color: t.body }} /> : null}
     </div>
   );
 }
 
 /** An arrow pointing right (row) or down (column), with an optional mono label. */
-export function Arrow({ length, direction, via }: { length: number; direction: "row" | "column"; via: string | null }) {
+export function Arrow({
+  length,
+  direction,
+  via,
+  t,
+}: {
+  length: number;
+  direction: "row" | "column";
+  via: string | null;
+  t: Theme;
+}) {
   const head = 12;
   const svg =
     direction === "row" ? (
-      <svg width={length} height={24} viewBox={`0 0 ${length} 24`} fill="none" stroke={COLORS.accent} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <svg width={length} height={24} viewBox={`0 0 ${length} 24`} fill="none" stroke={t.accent} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
         <path d={`M6 12H${length - 6}`} />
         <path d={`M${length - 6 - head} ${12 - head * 0.7}L${length - 6} 12L${length - 6 - head} ${12 + head * 0.7}`} />
       </svg>
     ) : (
-      <svg width={24} height={length} viewBox={`0 0 24 ${length}`} fill="none" stroke={COLORS.accent} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <svg width={24} height={length} viewBox={`0 0 24 ${length}`} fill="none" stroke={t.accent} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
         <path d={`M12 6V${length - 6}`} />
         <path d={`M${12 - head * 0.7} ${length - 6 - head}L12 ${length - 6}L${12 + head * 0.7} ${length - 6 - head}`} />
       </svg>
     );
   const viaLabel = via ? (
-    <div style={{ display: "flex", fontFamily: FONTS.mono, fontWeight: 600, fontSize: DIAGRAM.viaSize, color: COLORS.accent }}>
+    <div style={{ display: "flex", fontFamily: FONTS.mono, fontWeight: 600, fontSize: DIAGRAM.viaSize, color: t.label }}>
       {upper(via)}
     </div>
   ) : null;
@@ -462,7 +469,7 @@ export function Arrow({ length, direction, via }: { length: number; direction: "
 }
 
 /** A diagram: boxes joined by arrows, or comparison columns. */
-export function DiagramView({ diagram }: { diagram: DiagramModel }) {
+export function DiagramView({ diagram, t }: { diagram: DiagramModel; t: Theme }) {
   if (diagram.type === "columns") {
     return (
       <div style={{ display: "flex", width: diagram.width, height: diagram.height }}>
@@ -477,17 +484,17 @@ export function DiagramView({ diagram }: { diagram: DiagramModel }) {
               marginLeft: i === 0 ? 0 : DIAGRAM.columnGap,
               padding: DIAGRAM.pad,
               borderRadius: DIAGRAM.radius,
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "2px solid rgba(255, 255, 255, 0.12)",
+              background: t.panelFill,
+              border: `2px solid ${t.panelEdge}`,
             }}
           >
-            <Lines block={c.heading} style={{ fontWeight: 800, color: COLORS.accent, marginBottom: DIAGRAM.itemGap * 1.5 }} />
+            <Lines block={c.heading} style={{ fontWeight: 800, color: t.label, marginBottom: DIAGRAM.itemGap * 1.5 }} />
             {c.items.map((item, j) => (
               <div key={j} style={{ display: "flex", marginTop: j === 0 ? 0 : DIAGRAM.itemGap }}>
                 <div style={{ display: "flex", width: DIAGRAM.itemIndent, paddingTop: (item.fontSize * item.lineHeight) / 2 - 5 }}>
-                  <div style={{ display: "flex", width: 10, height: 10, borderRadius: 5, background: COLORS.accent }} />
+                  <div style={{ display: "flex", width: 10, height: 10, borderRadius: 5, background: t.accent }} />
                 </div>
-                <Lines block={item} style={{ color: COLORS.lightMuted }} />
+                <Lines block={item} style={{ color: t.body }} />
               </div>
             ))}
           </div>
@@ -500,8 +507,8 @@ export function DiagramView({ diagram }: { diagram: DiagramModel }) {
     <div style={{ display: "flex", flexDirection: row ? "row" : "column", width: diagram.width, height: diagram.height }}>
       {diagram.boxes.map((box, i) => (
         <div key={i} style={{ display: "flex", flexDirection: row ? "row" : "column" }}>
-          {i > 0 ? <Arrow length={diagram.arrow} direction={diagram.direction} via={diagram.boxes[i - 1]!.via} /> : null}
-          <Box box={box} />
+          {i > 0 ? <Arrow length={diagram.arrow} direction={diagram.direction} via={diagram.boxes[i - 1]!.via} t={t} /> : null}
+          <Box box={box} t={t} />
         </div>
       ))}
     </div>
@@ -510,7 +517,7 @@ export function DiagramView({ diagram }: { diagram: DiagramModel }) {
 
 // Code panel. -------------------------------------------------------------------------------------
 
-/** Code as text in an editor window: tab with filename, line numbers, syntax colours. */
+/** Code as text in an editor window: tab with filename, line numbers, syntax colours. Always dark. */
 export function CodePanel({ code }: { code: CodeModel }) {
   const lineHeight = code.fontSize * CODE.lineHeight;
   return (
@@ -521,18 +528,18 @@ export function CodePanel({ code }: { code: CodeModel }) {
         width: code.width,
         height: code.height,
         borderRadius: 24,
-        background: "#0b1220",
-        border: "2px solid #1e293b",
+        background: CODE_PANEL.bg,
+        border: CODE_PANEL.edge,
         fontFamily: FONTS.mono,
         overflow: "hidden",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", height: CODE.tab, padding: `0 ${CODE.padX}px`, background: "#111a2e" }}>
+      <div style={{ display: "flex", alignItems: "center", height: CODE.tab, padding: `0 ${CODE.padX}px`, background: CODE_PANEL.tab }}>
         {[0, 1, 2].map((i) => (
-          <div key={i} style={{ display: "flex", width: 14, height: 14, borderRadius: 7, marginRight: 10, background: "#334155" }} />
+          <div key={i} style={{ display: "flex", width: 14, height: 14, borderRadius: 7, marginRight: 10, background: CODE_PANEL.dot }} />
         ))}
         {code.filename ? (
-          <div style={{ display: "flex", marginLeft: 18, fontSize: 22, color: COLORS.lightMuted }}>{code.filename}</div>
+          <div style={{ display: "flex", marginLeft: 18, fontSize: 22, color: CODE_PANEL.filename }}>{code.filename}</div>
         ) : null}
       </div>
       <div style={{ display: "flex", flexDirection: "column", padding: `${CODE.padY}px 0` }}>
@@ -545,7 +552,7 @@ export function CodePanel({ code }: { code: CodeModel }) {
               alignItems: "center",
               padding: `0 ${CODE.padX}px`,
               fontSize: code.fontSize,
-              background: code.highlight.includes(i + 1) ? "rgba(6, 182, 212, 0.14)" : "transparent",
+              background: code.highlight.includes(i + 1) ? CODE_PANEL.highlight : "transparent",
             }}
           >
             <div
@@ -554,14 +561,14 @@ export function CodePanel({ code }: { code: CodeModel }) {
                 justifyContent: "flex-end",
                 width: (code.gutter - 1) * code.fontSize * CODE.charEm,
                 marginRight: code.fontSize * CODE.charEm,
-                color: "#475569",
+                color: CODE_PANEL.gutter,
               }}
             >
               {String(i + 1)}
             </div>
-            {line.map((t, j) => (
-              <div key={j} style={{ display: "flex", color: CODE_COLORS[t.kind] }}>
-                {nbsp(t.text)}
+            {line.map((tok, j) => (
+              <div key={j} style={{ display: "flex", color: CODE_COLORS[tok.kind] }}>
+                {nbsp(tok.text)}
               </div>
             ))}
           </div>
@@ -572,7 +579,7 @@ export function CodePanel({ code }: { code: CodeModel }) {
 }
 
 /** A pill at the top of the content area, e.g. LOCAL-01's "Illustrative concept". */
-export function Badge({ text }: { text: string }) {
+export function Badge({ text, t }: { text: string; t: Theme }) {
   return (
     <div style={{ display: "flex", height: BADGE.height, marginBottom: BADGE.gap }}>
       <div
@@ -582,13 +589,13 @@ export function Badge({ text }: { text: string }) {
           height: BADGE.height,
           padding: "0 20px",
           borderRadius: BADGE.height / 2,
-          border: `2px solid ${COLORS.accent}`,
-          background: "rgba(15, 23, 42, 0.72)",
+          border: `2px solid ${t.label}`,
+          background: t.badgeFill,
           fontFamily: FONTS.mono,
           fontWeight: 600,
           fontSize: BADGE.size,
           letterSpacing: "0.1em",
-          color: COLORS.accent,
+          color: t.label,
         }}
       >
         {upper(text)}

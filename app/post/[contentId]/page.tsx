@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { requireSignedIn } from "@/lib/auth";
 import { isTemplateBuilt, renderToken, slideViews } from "@/lib/graphics/render";
 import { DEFAULT_SIZE, SIZE_LABELS, SLIDE_SIZES, isSlideSize, type SlideSize } from "@/lib/graphics/sizes";
+import { themeFor } from "@/lib/graphics/model";
 import { listPosts } from "@/lib/post/load";
 import { placeholdersIn } from "@/lib/post/schema";
 import { formatDate } from "@/lib/post/schedule";
@@ -71,7 +72,9 @@ export default async function PostPage(props: PageProps<"/post/[contentId]">) {
         </div>
         <p className="mt-1 text-lg font-semibold">{post.topic}</p>
         <p className="text-sm text-text-secondary">
-          {post.series} · {post.pillar} · <span className="font-mono">{post.visualTemplate}</span> · {post.format} ·{" "}
+          {post.series} · {post.pillar} · <span className="font-mono">{post.visualTemplate}</span> · theme{" "}
+          <span className="font-mono">{themeFor(post)}</span>
+          {post.theme ? " (set on this post)" : " (series default)"} · {post.format} ·{" "}
           {post.platform}
         </p>
       </header>
