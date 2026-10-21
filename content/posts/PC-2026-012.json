@@ -21,7 +21,7 @@
     "#SmallBusiness"
   ],
   "status": "HUMAN_REVIEW",
-  "notes": "Rewritten 2026-10-21 to cover the website and the admin web app. Tseki confirmed (the client's site: Setsoto Intermediate School Hall, Tseki). 'Why it mattered' is the client's feedback as relayed by the founder, written as a paraphrase, not a quote; use quotation marks only with their exact words. Before approval: record written permission (who, date, method), and add the four screenshots in assets/shots/ (home on desktop; programmes on a phone; the WhatsApp enquiry on a phone; the admin dashboard on desktop). The admin screenshot must use demo data only: no real members' names, payments, weights or revenue, and BZ Fitness must agree to showing it. On Facebook, tag BZ Fitness and Wellness's page if it has one.",
+  "notes": "Rewritten 2026-10-21 to cover the website and the admin web app. Tseki confirmed (the client's site: Setsoto Intermediate School Hall, Tseki). 'Why it mattered' is the client's feedback as relayed by the founder, written as a paraphrase, not a quote; use quotation marks only with their exact words. Permission given on WhatsApp, 21 Oct 2026 (see clientPermission). The admin screenshot has the members, revenue and payment figures blurred (BZ Fitness said the real figures were fine too). Screenshots are in assets/shots/. On Facebook, tag BZ Fitness and Wellness's page if it has one.",
   "slides": [
     {
       "title": "Behind the Build",
@@ -60,7 +60,11 @@
     }
   ],
   "clientPermission": {
-    "status": "pending",
-    "client": "BZ Fitness and Wellness"
+    "status": "given",
+    "client": "BZ Fitness and Wellness",
+    "givenBy": "BZ Fitness and Wellness, on their business WhatsApp",
+    "date": "2026-10-21",
+    "method": "WhatsApp",
+    "reference": "WhatsApp chat with BZ Fitness and Wellness, 21 Oct 2026 13:03: \"Is it okay if I put your web app on our socials?\" / \"Yes you can\""
   }
 }

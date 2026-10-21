@@ -16,5 +16,4 @@ Still needed:
 
 | Post | File |
 |---|---|
-| PC-2026-012 (BZ Fitness and Wellness) | `bz-fitness-home-desktop.png`, `bz-fitness-programmes-phone.png`, `bz-fitness-whatsapp-phone.png`, `bz-fitness-admin-desktop.png` (demo data only) |
 | PC-2026-004 (Thiboloha Special School) | `thiboloha-home-desktop.png`, `thiboloha-home-phone.png` |
