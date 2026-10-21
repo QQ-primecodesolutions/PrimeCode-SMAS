@@ -7,23 +7,40 @@
   "topic": "Your business probably doesn't need an app",
   "audience": "SMEs / entrepreneurs",
   "objective": "Establish a point of view",
-  "format": "Single image",
+  "format": "Carousel",
   "platform": "IG + FB",
   "hook": "Your business probably doesn't need an app. It might need three other things first.",
-  "caption": "",
+  "caption": "Your business probably doesn't need an app. It might need three other things first.\n\n1. Be easy to find. A proper website and a Google Business Profile, so the people searching for what you do find you.\n\n2. Be easy to contact. One tap to WhatsApp or call, not a number hidden at the bottom of a photo.\n\n3. Get your admin off paper. Simple systems for bookings, members or payments, so you're not chasing notebooks and voice notes.\n\nAn app makes sense when those are already working and your customers keep coming back to do the same thing. Until then, these three will do more for you.\n\nWhen you do need an app, that's when we build one.\n\nDisagree? Tell us why in the comments.",
   "cta": "Disagree? Tell us why in the comments.",
   "visualTemplate": "INSIGHT-01",
-  "visualBrief": "Bold statement typography on dark background. No illustration. The sentence is the design.",
+  "visualBrief": "Typographic carousel: the hook, the three things one per slide, then the close. No illustration. The sentence is the design.",
   "hashtags": [
     "#BusinessTechnology",
     "#SmallBusiness",
     "#PrimeCodeSolutions"
   ],
-  "status": "IDEA",
+  "status": "HUMAN_REVIEW",
+  "notes": "Drafted 2026-10-21 from the founder's go-ahead (\"use yours\"): three things before an app. Changed from a single image to a 5-slide carousel so the three things can be named. No client is named.",
   "slides": [
     {
       "title": "Your business probably doesn't need an app.",
       "subtitle": "It might need three other things first."
+    },
+    {
+      "title": "First: be easy to find.",
+      "subtitle": "A proper website and a Google Business Profile, so people searching for you find you."
+    },
+    {
+      "title": "Second: be easy to contact.",
+      "subtitle": "One tap to WhatsApp or call. Not a number hidden in a photo."
+    },
+    {
+      "title": "Third: get your admin off paper.",
+      "subtitle": "Simple systems for bookings, members or payments."
+    },
+    {
+      "title": "Get those right first.",
+      "subtitle": "When you do need an app, that's when we build one."
     }
   ]
 }
