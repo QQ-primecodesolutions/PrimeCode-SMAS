@@ -10,18 +10,18 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "A community fitness business in Tseki needed more than a Facebook page.",
-  "caption": "A community fitness business [CONFIRM: in Tseki?] needed more than a Facebook page.\n\nBZ Fitness and Wellness has programmes and pricing to share.\n\nWhat we built: a business website that sets out their programmes, pricing and services clearly, on a phone, with a WhatsApp button so an enquiry is one tap away.\n\n[CONFIRM: why it mattered. What changed for them, in their words or in numbers they can stand behind.]\n\nRunning something similar? Let's talk about what you'd need.",
+  "caption": "A community fitness business in Tseki needed more than a Facebook page.\n\nBZ Fitness and Wellness had programmes, prices and events to share, and members to keep track of.\n\nWhat we built:\n- A website that sets out their programmes, pricing and events clearly on a phone, with a WhatsApp button so an enquiry is one tap away.\n- Behind it, an admin system for members, attendance, payments, progress, the class schedule and event registrations.\n\nWhy it mattered: the team told us the platform is easy to use, and there's less admin now that everything is simplified and digital.\n\nRunning something similar? Let's talk about what you'd need.",
   "cta": "Running something similar? Let's talk about what you'd need.",
   "visualTemplate": "PROJECT-01",
-  "visualBrief": "Phone mockups showing programmes, pricing and WhatsApp enquiry flow. Confirm client permission first.",
+  "visualBrief": "A laptop with the home page, phones with the programmes and the WhatsApp enquiry, and a laptop with the admin dashboard (demo data only). Confirm client permission first.",
   "hashtags": [
     "#PrimeCodeSolutions",
     "#WebDevelopment",
     "#FreeState",
     "#SmallBusiness"
   ],
-  "status": "DRAFT",
-  "notes": "Drafted from Brand Brain §15 (pricing, programme information, WhatsApp integration) and the workbook hook. Before approval: record written permission, replace every [CONFIRM: ...], confirm the business is in Tseki, and add the three screenshots in assets/shots/ (desktop home page; programmes on a phone; the WhatsApp enquiry on a phone). On Facebook, tag BZ Fitness and Wellness's page if it has one.",
+  "status": "HUMAN_REVIEW",
+  "notes": "Rewritten 2026-10-21 to cover the website and the admin web app. Tseki confirmed (the client's site: Setsoto Intermediate School Hall, Tseki). 'Why it mattered' is the client's feedback as relayed by the founder, written as a paraphrase, not a quote; use quotation marks only with their exact words. Before approval: record written permission (who, date, method), and add the four screenshots in assets/shots/ (home on desktop; programmes on a phone; the WhatsApp enquiry on a phone; the admin dashboard on desktop). The admin screenshot must use demo data only: no real members' names, payments, weights or revenue, and BZ Fitness must agree to showing it. On Facebook, tag BZ Fitness and Wellness's page if it has one.",
   "slides": [
     {
       "title": "Behind the Build",
@@ -31,23 +31,29 @@
     },
     {
       "title": "THE PROBLEM",
-      "subtitle": "A community fitness business that needed more than a Facebook page."
+      "subtitle": "A community fitness business in Tseki that needed more than a Facebook page."
     },
     {
       "title": "WHAT WE BUILT",
-      "subtitle": "A business website with their programmes, pricing and services in one place.",
+      "subtitle": "A website with their programmes, pricing and events in one place.",
       "asset": "shots/bz-fitness-programmes-phone.png",
-      "assetAlt": "The programmes page on a phone"
+      "assetAlt": "The programmes and prices on a phone"
     },
     {
       "title": "ONE TAP TO ASK",
       "subtitle": "A WhatsApp button, so an enquiry goes straight to them.",
       "asset": "shots/bz-fitness-whatsapp-phone.png",
-      "assetAlt": "The WhatsApp enquiry button on a phone"
+      "assetAlt": "The WhatsApp enquiry on a phone"
+    },
+    {
+      "title": "BEHIND THE SCENES",
+      "subtitle": "An admin system for members, attendance, payments and progress.",
+      "asset": "shots/bz-fitness-admin-desktop.png",
+      "assetAlt": "The BZ Fitness admin dashboard on a laptop, with demo data"
     },
     {
       "title": "WHY IT MATTERED",
-      "subtitle": "[CONFIRM: what changed for BZ Fitness?]"
+      "subtitle": "Easy to use, and less admin now that everything is simplified and digital."
     },
     {
       "title": "Built by PrimeCode Solutions."
