@@ -10,20 +10,46 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "People think building software starts with code. It starts with a conversation.",
-  "caption": "",
+  "caption": "People think building software starts with code. It starts with a conversation.\n\nHere's how a PrimeCode project works:\n\n1. A conversation. Sometimes we reach out, in person or on social media, and sometimes we bring a quick example of what could help. It's free.\n\n2. Understanding your business. We meet online or visit you, and go through how your business works in detail.\n\n3. Design first. You see the design before we build anything, and we meet a few times to get it right.\n\n4. Build, and test as we go. You try it while we build it, not only at the end.\n\n5. Handover and training. We train you on what we built, free, and we're here for the long run.\n\nHave an idea sitting in your notes app? Send it to us.",
   "cta": "Have an idea sitting in your notes app? Send it to us.",
   "visualTemplate": "BRAND-01",
-  "visualBrief": "Numbered process carousel: Conversation / Understanding the problem / Design / Build / Handover. Keep to 5 steps.",
+  "visualBrief": "Numbered process carousel: the hook, the five steps one per slide, then the close.",
   "hashtags": [
     "#CustomSoftware",
     "#PrimeCodeSolutions",
     "#Entrepreneurs",
     "#SouthAfrica"
   ],
-  "status": "IDEA",
+  "status": "HUMAN_REVIEW",
+  "notes": "Drafted 2026-10-21 from the founder's description of the process: a free first conversation (in person or on socials, sometimes with a proof of concept); a virtual meeting or a visit; design approved over a few meetings; clients test during the build; free training and a long-term relationship. No prices, timelines or support periods are promised.",
   "slides": [
     {
-      "title": "People think building software starts with code. It starts with a conversation."
+      "title": "People think building software starts with code.",
+      "subtitle": "It starts with a conversation."
+    },
+    {
+      "title": "1. A conversation.",
+      "subtitle": "Free. Sometimes we bring a quick example of what could help."
+    },
+    {
+      "title": "2. Understanding your business.",
+      "subtitle": "We meet online or visit you, and go through how it works in detail."
+    },
+    {
+      "title": "3. Design first.",
+      "subtitle": "You see the design before we build, and we meet a few times to get it right."
+    },
+    {
+      "title": "4. Build, and test as we go.",
+      "subtitle": "You try it while we build it, not only at the end."
+    },
+    {
+      "title": "5. Handover and training.",
+      "subtitle": "Free training on what we built, and we're here for the long run."
+    },
+    {
+      "title": "That's how it starts.",
+      "subtitle": "With a conversation."
     }
   ]
 }
