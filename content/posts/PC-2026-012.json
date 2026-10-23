@@ -1,7 +1,7 @@
 {
   "contentId": "PC-2026-012",
-  "week": 2,
-  "publishDate": "2026-10-30",
+  "week": 3,
+  "publishDate": "2026-10-27",
   "series": "Build With PrimeCode",
   "pillar": "Projects",
   "topic": "Behind the Build: BZ Fitness and Wellness",
@@ -20,7 +20,7 @@
     "#FreeState",
     "#SmallBusiness"
   ],
-  "status": "APPROVED",
+  "status": "SCHEDULED",
   "notes": "Rewritten 2026-10-21 to cover the website and the admin web app. Tseki confirmed (the client's site: Setsoto Intermediate School Hall, Tseki). 'Why it mattered' is the client's feedback as relayed by the founder, written as a paraphrase, not a quote; use quotation marks only with their exact words. Permission given on WhatsApp, 21 Oct 2026 (see clientPermission). The admin screenshot has the members, revenue and payment figures blurred (BZ Fitness said the real figures were fine too). Screenshots are in assets/shots/. On Facebook, tag BZ Fitness and Wellness's page if it has one.",
   "slides": [
     {
