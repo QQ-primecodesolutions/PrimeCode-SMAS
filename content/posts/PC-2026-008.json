@@ -13,7 +13,7 @@
   "caption": "",
   "cta": "What's the one thing you'd fix about your business online?",
   "visualTemplate": "JOURNEY-01",
-  "visualBrief": "Photo of Retshidi at the desk / with a laptop. Real photo, not a stock image. Caption carries the story.",
+  "visualBrief": "Photo of the founder's real office desk (laptop, workspace), with no person in it. Real photo, not a stock image. Caption carries the story.",
   "hashtags": [
     "#PrimeCodeSolutions",
     "#Qwaqwa",
@@ -24,9 +24,9 @@
   "slides": [
     {
       "title": "I kept seeing good businesses here losing customers for one avoidable reason.",
-      "asset": "photos/founder-desk.jpg",
-      "assetAlt": "Retshidi at the desk with a laptop"
+      "asset": "photos/office-desk.jpg",
+      "assetAlt": "The PrimeCode office desk"
     }
   ],
-  "notes": "The caption is the founder's own story: write it in your words. Needs a real photo at assets/photos/founder-desk.jpg (not stock)."
+  "notes": "The caption is the founder's own story: write it in your words. The founder prefers not to appear: use a real photo of the office desk at assets/photos/office-desk.jpg (not stock, no person)."
 }
