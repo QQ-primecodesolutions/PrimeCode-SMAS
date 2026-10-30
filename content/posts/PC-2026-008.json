@@ -9,8 +9,8 @@
   "objective": "Humanise the brand",
   "format": "Single image",
   "platform": "IG + FB",
-  "hook": "I kept seeing good businesses here losing customers for one avoidable reason.",
-  "caption": "",
+  "hook": "Qwaqwa has so much potential. A lack of technology shouldn't be what holds it back.",
+  "caption": "Why we started PrimeCode Solutions.\n\nQwaqwa has a lot of potential to grow. What puts a limit on it isn't the people or the ideas. It's that there isn't much technology here yet.\n\nThat's why we started PrimeCode: to bring digital transformation closer to home.\n\nAnd who else would do it, if not people born and bred here?\n\nWhat's the one thing you'd fix about your business online?",
   "cta": "What's the one thing you'd fix about your business online?",
   "visualTemplate": "JOURNEY-01",
   "visualBrief": "Photo of the founder's real office desk (laptop, workspace), with no person in it. Real photo, not a stock image. Caption carries the story.",
@@ -20,13 +20,13 @@
     "#Phuthaditjhaba",
     "#FoundersJourney"
   ],
-  "status": "IDEA",
+  "status": "HUMAN_REVIEW",
   "slides": [
     {
-      "title": "I kept seeing good businesses here losing customers for one avoidable reason.",
+      "title": "Qwaqwa has so much potential. A lack of technology shouldn't be what holds it back.",
       "asset": "photos/office-desk.jpg",
       "assetAlt": "The PrimeCode office desk"
     }
   ],
-  "notes": "The caption is the founder's own story: write it in your words. The founder prefers not to appear: use a real photo of the office desk at assets/photos/office-desk.jpg (not stock, no person)."
+  "notes": "Drafted 2026-10-30 from the founder's own words: Qwaqwa has a lot of potential, the lack of technology limits it, and who else would do it but people born and bred here. The hook changed from the workbook's \"one avoidable reason\" to match that story. The founder prefers not to appear: the photo is the real office desk (assets/photos/office-desk.jpg)."
 }
