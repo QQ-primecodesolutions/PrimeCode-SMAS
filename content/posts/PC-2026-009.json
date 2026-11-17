@@ -10,7 +10,7 @@
   "format": "Carousel",
   "platform": "IG + FB",
   "hook": "WhatsApp bookings work, right up until they don't.",
-  "caption": "WhatsApp bookings work, right up until they don't.\n\nIf you get a few bookings a week and you answer quickly, WhatsApp is fine. Keep it.\n\nBut here's when it starts to break:\n- Two people book the same slot, because the first message got buried under the next twenty.\n- Your evenings go on scrolling through chats to work out who's coming tomorrow.\n- People forget their booking, and nothing reminded them. That's an empty slot you could have filled.\n\nA simple booking system fixes all three. Customers pick an open slot themselves, you see your whole day at a glance, and reminders go out on their own.\n\nHow many bookings do you handle a week? Comment below.",
+  "caption": "WhatsApp bookings work, right up until they don't.\n\nIf you get a few bookings a week and you answer quickly, WhatsApp is fine. Keep it.\n\nBut here's when it starts to break:\n- Two people book the same slot, because the first message got buried under the next twenty.\n- Your evenings go on scrolling through chats to work out who's coming tomorrow.\n- People forget their booking, and nothing reminded them. That's an empty slot you could have filled.\n\nA simple booking system fixes all three. Customers pick an open slot themselves, you see your whole day at a glance, and reminders go out on their own. That's the kind of thing we build.\n\nHow many bookings do you handle a week? Comment below.",
   "cta": "How many bookings do you handle a week? Comment below.",
   "visualTemplate": "BIZ-01",
   "visualBrief": "BIZ-01 carousel: the hook, when WhatsApp is fine (tick), three signs it breaks (crosses), then what a booking system does.",
@@ -21,7 +21,7 @@
     "#PrimeCodeSolutions"
   ],
   "status": "HUMAN_REVIEW",
-  "notes": "Drafted 2026-11-17 as general education, from the outline agreed earlier. No client named and no statistics. It doesn't say we build booking systems; add that only if the founder confirms.",
+  "notes": "Drafted 2026-11-17 as general education, from the outline agreed earlier. No client named and no statistics. The founder confirmed we build booking systems (2026-11-17).",
   "slides": [
     {
       "title": "WhatsApp bookings work, right up until they don't.",
