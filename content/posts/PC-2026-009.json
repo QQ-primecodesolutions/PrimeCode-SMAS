@@ -9,21 +9,46 @@
   "objective": "Create demand",
   "format": "Carousel",
   "platform": "IG + FB",
-  "hook": "WhatsApp bookings work — right up until they don't.",
-  "caption": "",
+  "hook": "WhatsApp bookings work, right up until they don't.",
+  "caption": "WhatsApp bookings work, right up until they don't.\n\nIf you get a few bookings a week and you answer quickly, WhatsApp is fine. Keep it.\n\nBut here's when it starts to break:\n- Two people book the same slot, because the first message got buried under the next twenty.\n- Your evenings go on scrolling through chats to work out who's coming tomorrow.\n- People forget their booking, and nothing reminded them. That's an empty slot you could have filled.\n\nA simple booking system fixes all three. Customers pick an open slot themselves, you see your whole day at a glance, and reminders go out on their own.\n\nHow many bookings do you handle a week? Comment below.",
   "cta": "How many bookings do you handle a week? Comment below.",
   "visualTemplate": "BIZ-01",
-  "visualBrief": "Split-screen visual: messy chat thread vs clean booking screen. Slides: when WhatsApp is fine / when it breaks / what a booking system does.",
+  "visualBrief": "BIZ-01 carousel: the hook, when WhatsApp is fine (tick), three signs it breaks (crosses), then what a booking system does.",
   "hashtags": [
     "#SmallBusiness",
     "#BusinessTechnology",
     "#Qwaqwa",
     "#PrimeCodeSolutions"
   ],
-  "status": "IDEA",
+  "status": "HUMAN_REVIEW",
+  "notes": "Drafted 2026-11-17 as general education, from the outline agreed earlier. No client named and no statistics. It doesn't say we build booking systems; add that only if the founder confirms.",
   "slides": [
     {
-      "title": "WhatsApp bookings work — right up until they don't."
+      "title": "WhatsApp bookings work, right up until they don't.",
+      "subtitle": "Here's how to tell when you've outgrown them."
+    },
+    {
+      "title": "1. A few bookings a week, answered quickly.",
+      "subtitle": "WhatsApp is fine here. Keep it."
+    },
+    {
+      "title": "2. Two people booked the same slot.",
+      "subtitle": "The first message got buried under the next twenty.",
+      "mark": "cross"
+    },
+    {
+      "title": "3. Your evenings go on scrolling chats.",
+      "subtitle": "Just to work out who's coming tomorrow.",
+      "mark": "cross"
+    },
+    {
+      "title": "4. People forget, and nothing reminded them.",
+      "subtitle": "An empty slot you could have filled.",
+      "mark": "cross"
+    },
+    {
+      "title": "What a booking system does.",
+      "subtitle": "Customers pick an open slot themselves, you see your day at a glance, and reminders go out on their own."
     }
   ]
 }
